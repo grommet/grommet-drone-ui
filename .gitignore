@@ -1,0 +1,9 @@
+/dist/index.html
+/dist/index.js
+/dist/index.css
+/dist/img/
+/node_modules/
+.DS_Store
+.docker
+*.log
+coverage

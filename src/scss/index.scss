@@ -1,0 +1,137 @@
+@import 'drone.defaults';
+@import '~grommet/scss/grommet-core/index';
+@import 'objects.button-drone';
+
+.drone-heading {
+  color: #D06000;
+  letter-spacing: 2px;
+}
+
+b.drone-strong {
+  font-weight: 700;
+}
+
+.drone-message__container {
+  border-radius: 8px;
+  border-bottom-left-radius: 0px;
+  margin-bottom: 24px;
+}
+
+.drone-message:not(.drone-message--colored) .drone-message__container {
+  background-color: #D06000;
+}
+
+.drone-avatar {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 100%;
+}
+
+.drone-logo--medium {
+  width: 48px;
+  height: 48px;
+}
+
+.drone-logo--large {
+  width: 96px;
+  height: 96px;
+}
+
+.drone-message-box {
+  border-radius: 4px;
+}
+
+.drone-menu-item__label {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drone-menu-item--active {
+  font-weight: 700;
+}
+
+.drone-menu-item--active,
+.drone-menu-item:hover,
+.drone-anchor:focus .drone-menu-item {
+  background-color: #333333;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.drone-status-circle {
+  animation: fade 0.2s;
+}
+
+.drone-status-circle,
+.drone-status-circle--unknown {
+  stroke: map-get($brand-status-colors, unknown);
+  stroke-width: 2px;
+  fill: none;
+}
+
+.drone-status-circle--active,
+.drone-status-circle--unknown.drone-status-circle--active,
+.drone-menu-item:hover .drone-status-circle,
+.drone-menu-item:hover .drone-status-circle--unknown,
+.drone-anchor:focus .drone-status-circle,
+.drone-anchor:focus .drone-status-circle--unknown {
+  fill: map-get($brand-status-colors, unknown);
+}
+
+.drone-status-circle--success {
+  stroke: map-get($brand-status-colors, ok);
+  stroke-width: 2px;
+  fill: none;
+}
+
+.drone-status-circle--success.drone-status-circle--active,
+.drone-menu-item:hover .drone-status-circle--success,
+.drone-anchor:focus .drone-status-circle--success {
+  fill: map-get($brand-status-colors, ok);
+}
+
+.drone-status-circle--failure {
+  stroke: map-get($brand-status-colors, critical);
+  stroke-width: 2px;
+  fill: none;
+}
+
+.drone-status-circle--failure.drone-status-circle--active,
+.drone-menu-item:hover .drone-status-circle--failure,
+.drone-anchor:focus .drone-status-circle--failure {
+  fill: map-get($brand-status-colors, critical);
+}
+
+.drone-status-circle--running {
+  margin-bottom: 12px;
+  animation: jump 0.6s infinite;
+}
+
+@keyframes jump {
+  0% {
+    margin-bottom: 0px;
+    transform: scale(1.1, 0.9);
+  }
+
+  50% {
+    transform: scale(1, 1);
+  }
+
+  100% {
+    transform: scale(1, 1);
+    margin-bottom: 12px;
+  }
+}
+
+@keyframes fade {
+  0% {
+    margin-bottom: 6px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}

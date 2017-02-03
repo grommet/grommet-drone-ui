@@ -1,0 +1,130 @@
+// (C) Copyright 2014-2016 Hewlett Packard Enterprise Development LP
+
+$brand-color: #4FC3BC;
+$brand-neutral-colors: (#0A64A0, #DC2878, #501EB4, #49516F);
+$brand-accent-colors: (#00CCEB, #FF7D28);
+$brand-grey-colors: (#000001, #333333, #444444, #666666, #C3C5C8, #F6F6F7);
+$brand-link-color: #865CD6;
+$brand-status-colors: (
+  critical: #FF205C,
+  error: #FF324D,
+  warning: #FFD602,
+  ok: #34FF94,
+  unknown: #979797,
+  disabled: #a8a8a8
+) !default;
+$brand-grey-colors: (#000001, #333333, #3B3B3B, #434343, #666666);
+@if not variable-exists(brand-graph-colors) {
+  $brand-graph-colors: ();
+  $brand-graph-colors: join($brand-graph-colors, $brand-accent-colors);
+  $brand-graph-colors: join($brand-graph-colors, $brand-neutral-colors);
+};
+
+$button-secondary-color: nth($brand-neutral-colors, 2);
+
+$brand-font-family: 'Open Sans', Arial, sans-serif;
+$brand-large-number-font-family: 'Open Sans', Arial, sans-serif;
+$code-font-family: Consolas, Menlo, 'DejaVu Sans Mono', 'Liberation Mono', monospace;
+$text-strong-font-weight: 500;
+
+$fonts-path: "https://fonts.gstatic.com/s/opensans/v13" !default;
+$heading-fonts-path: "https://fonts.gstatic.com/s/exo/v4" !default;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Exo', Arial, sans-serif;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local('Open Sans Light'),
+    local('OpenSans-Light'),
+    url("#{$fonts-path}/DXI1ORHCpsQm3Vp6mXoaTQ7aC6SjiAOpAWOKfJDfVRY.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('Open Sans'),
+    local('OpenSans-Regular'),
+    url("#{$fonts-path}/K88pR3goAWT7BTt32Z01m4X0hVgzZQUfRDuZrPvH3D8.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src:
+    local('Open Sans SemiBold'),
+    local('OpenSans-SemiBold'),
+    url("#{$fonts-path}/MTP_ySUJH_bn48VBG8sNSg7aC6SjiAOpAWOKfJDfVRY.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('Open Sans Bold'),
+    local('OpenSans-Bold'),
+    url("#{$fonts-path}/k3k702ZOKiLJc3WVjuplzA7aC6SjiAOpAWOKfJDfVRY.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local('Exo Light'),
+    local('Exo-Light'),
+    url("#{heading-fonts-path}/Xx2s4klBlTqfk-mWlGJ9Z3-_kf6ByYO6CLYdB4HQE-Y.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('Exo'),
+    local('Exo-Regular'),
+    url("#{heading-fonts-path}/iUvPihxoWzGqTaQINBJUg-vvDin1pK8aKteLpeZ5c0A.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo';
+  font-style: normal;
+  font-weight: 500;
+  src:
+    local('Exo Medium'),
+    local('Exo-Medium'),
+    url("#{heading-fonts-path}/hyACI556ZrB6j7QvrcI0OOvvDin1pK8aKteLpeZ5c0A.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo';
+  font-style: normal;
+  font-weight: 600;
+  src:
+    local('Exo DemiBold'),
+    local('Exo-DemiBold'),
+    url("#{heading-fonts-path}/Tp0YfPJX-_s1QEnGzkfYv3-_kf6ByYO6CLYdB4HQE-Y.woff2") format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('Exo Bold'),
+    local('Exo-Bold'),
+    url("#{heading-fonts-path}/NxrZap8zhYYdW3Xuc_GPDH-_kf6ByYO6CLYdB4HQE-Y.woff2") format('woff2');
+}
