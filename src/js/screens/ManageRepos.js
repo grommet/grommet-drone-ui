@@ -132,17 +132,19 @@ class ManageRepos extends Component {
       reposNode = <Loading />;
     }
     return (
-      <Box>
-        {toastNode}
-        <Header fixed={false} align='start' direction='column'
-          pad={{
-            vertical: 'medium', horizontal: 'medium', between: 'medium'
-          }}>
-          <Anchor a11yTitle='Return to Dashboard' path='/'
-            label='Back' icon={<LinkPrevious />} />
-          <Heading margin='none'>manage repos</Heading>
-        </Header>
-        {reposNode}
+      <Box full={true}>
+        <Box flex={false}>
+          {toastNode}
+          <Header align='start' direction='column'
+            pad={{
+              vertical: 'medium', horizontal: 'medium', between: 'medium'
+            }}>
+            <Anchor a11yTitle='Return to Dashboard' path='/'
+              label='Back' icon={<LinkPrevious />} />
+            <Heading margin='none'>manage repos</Heading>
+          </Header>
+          {reposNode}
+        </Box>
       </Box>
     );
   }

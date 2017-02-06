@@ -72,13 +72,13 @@ class RepoView extends Component {
     } = this.props;
     const { customMessages } = this.state;
 
-    let messagesNode = this._previousMessages;
+    let messageNodes = this._previousMessages;
 
     if (error) {
       if (error === 'Not Found') {
         return <NotFound />;
       }
-      messagesNode.push(
+      messageNodes.push(
         <DroneMessage key='error-message'
           colorIndex='critical'
           message={error} />
@@ -90,18 +90,18 @@ class RepoView extends Component {
       repoWithBuilds : undefined;
 
     if (loading) {
-      messagesNode.push(
+      messageNodes.push(
         <DroneMessage key='loading-message'
           message='Hang tight, I am loading your recent builds...' />
       );
     } else if (repo && (!repo.builds || repo.builds.length === 0)) {
-      messagesNode.push(
+      messageNodes.push(
         <DroneMessage key='empty-repo-message'
           message='This repo does not have any build yet. Add a .drone.yml to get started...' />
       );
     }
 
-    this._previousMessages = messagesNode;
+    this._previousMessages = messageNodes;
 
     let buildNodes;
     if (repo && repo.builds) {
@@ -129,7 +129,7 @@ class RepoView extends Component {
       });
     }
 
-    messagesNode = messagesNode.concat(buildNodes)
+    messageNodes = messageNodes.concat(buildNodes)
       .concat(customMessages.map((m, index) => (
         <DroneMessage key={`custom-message-${index}`} message={m}
           colorIndex='grey-4'
@@ -137,8 +137,8 @@ class RepoView extends Component {
       )));
 
     return (
-      <Box colorIndex='grey-2' pad='medium' style={{ minHeight: '100%' }}>
-        <Header justify='between'>
+      <Box colorIndex='grey-2' full='vertical'>
+        <Header justify='between' pad='medium'>
           <Box align='center' direction='row' responsive={false}
             pad={{ between: 'small' }}>
             <DroneStatusCircle active={true}
@@ -156,10 +156,10 @@ class RepoView extends Component {
               icon={<Validate />} />
           </Menu>
         </Header>
-        <Box flex={true} pad={{ vertical: 'medium' }}>
-          {messagesNode}
+        <Box flex={true} pad='medium'>
+          {messageNodes}
         </Box>
-        <Footer full='horizontal'>
+        <Footer full='horizontal' pad='medium'>
           <DroneMessageBox onSend={this._onMessageReceived} />
         </Footer>
       </Box>

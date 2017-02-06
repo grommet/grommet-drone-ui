@@ -21,7 +21,8 @@ class DroneMessage extends Component {
     });
 
     return (
-      <Box align='end' className={classes} direction='row' full='horizontal'
+      <Box flex={false} align='end' className={classes} direction='row'
+        full='horizontal'
         responsive={false} pad={{ between: 'small', vertical: 'small' }}>
         {avatarNode}
         <Box pad='small' className={`${CLASS_ROOT}__container`}
