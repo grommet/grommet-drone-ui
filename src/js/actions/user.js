@@ -25,6 +25,9 @@ export function startUserReposStream() {
       dispatch({
         type: REPO_NEW_BUILD, repoName: repo.full_name, payload: build
       });
+
+      // notify User list about the about on the build
+      // this is useful for reflecting the changes in the nav bar
       dispatch({ type: USER_UPDATE_REPO, payload: repo });
     };
   };

@@ -61,23 +61,28 @@ const handlers = {
     if (repo && repo.full_name === action.repoName) {
       const repoWithBuilds = { ...state.repoWithBuilds };
       repoWithBuilds.status = action.payload.status;
-      if (repoWithBuilds.builds && repoWithBuilds.builds.length > 0) {
-        const lastBuild = (
+      if (!repoWithBuilds.builds) {
+        repoWithBuilds.builds = [];
+      }
+
+      let lastBuild;
+      if (repoWithBuilds.builds.length > 0) {
+        lastBuild = (
           repoWithBuilds.builds[repoWithBuilds.builds.length - 1]
         );
-
-        if (lastBuild.number === action.payload.number) {
-          repoWithBuilds.builds[
-            repoWithBuilds.builds.length - 1
-          ] = action.payload;
-        } else {
-          repoWithBuilds.builds.push(action.payload);
-        }
-
-        return {
-          repoWithBuilds
-        };
       }
+
+      if (lastBuild && lastBuild.number === action.payload.number) {
+        repoWithBuilds.builds[
+          repoWithBuilds.builds.length - 1
+        ] = action.payload;
+      } else {
+        repoWithBuilds.builds.push(action.payload);
+      }
+
+      return {
+        repoWithBuilds
+      };
     }
     return undefined;
   },
