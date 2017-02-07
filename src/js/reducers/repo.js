@@ -1,6 +1,6 @@
 import {
   REPO_ADD, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
-  REPO_NEW_BUILD, REPO_REMOVE
+  REPO_LOAD_BUILD_LOGS, REPO_NEW_BUILD, REPO_REMOVE
 } from '../actions';
 import { createReducer } from './utils';
 
@@ -55,6 +55,17 @@ const handlers = {
       };
     }
     return { error: action.payload, loading: false, repoWithBuilds: undefined };
+  },
+  [REPO_LOAD_BUILD_LOGS]: (state, action) => {
+    if (!action.error && !action.loading) {
+      return { loading: false, build: action.payload };
+    }
+    if (action.loading) {
+      return {
+        loading: true, build: undefined
+      };
+    }
+    return { error: action.payload, loading: false, build: undefined };
   },
   [REPO_NEW_BUILD]: (state, action) => {
     const repo = state.repoWithBuilds;

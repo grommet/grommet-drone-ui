@@ -122,9 +122,13 @@ class RepoView extends Component {
           </Box>
         );
         return (
-          <DroneMessage key={`build-message-${index}`} message={message}
-            colorIndex='grey-4'
-            avatar={<Avatar src={build.author_avatar} name={build.author} />} />
+          <Anchor key={`build-message-${index}`}
+            path={`/${repoName}/build/${build.number}`}>
+            <DroneMessage message={message}
+              colorIndex='grey-4'
+              avatar={<Avatar src={build.author_avatar}
+                name={build.author} />} />
+          </Anchor>
         );
       });
     }

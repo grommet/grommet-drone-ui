@@ -57,7 +57,7 @@ class NavSidebar extends Component {
     let botMenuItem;
     if (bot && bot.name) {
       botMenuItem = (
-        <DroneMenuItem path='/' label={bot.name} status='success' />
+        <DroneMenuItem path='/' label={bot.name} status='success' root={true} />
       );
     }
 

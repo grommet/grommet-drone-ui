@@ -41,6 +41,45 @@ export function getBuilds(repoName) {
   return fetch(`/api/repos/${repoName}/builds`, options).then(parseJSON);
 }
 
+export function getBuild(repoName, number) {
+  const options = {
+    headers: headers(),
+    method: 'GET',
+    credentials: 'include'
+  };
+
+  return fetch(
+    `/api/repos/${repoName}/builds/${number}`, options
+  ).then(parseJSON);
+}
+
+export function getLog(repoName, number, job) {
+  const options = {
+    headers: headers(),
+    method: 'GET',
+    credentials: 'include'
+  };
+
+  return fetch(
+    `/api/repos/${repoName}/logs/${number}/${job}`, options
+  ).then(parseJSON).then((lines) => {
+    const procs = {};
+
+    // this code groups the lines of output by process.
+    lines.forEach((line) => {
+      if (!line || !line.proc || !line.out) return;
+      let proc = procs[line.proc];
+      if (!proc) {
+        proc = [];
+        procs[line.proc] = proc;
+      }
+      proc.push(line);
+    });
+
+    return Promise.resolve(procs);
+  });
+}
+
 export function remove(repo) {
   const options = {
     headers: headers(),
@@ -52,4 +91,4 @@ export function remove(repo) {
     .then(processResponse);
 }
 
-export default { add, getAll, getBuilds, remove };
+export default { add, getAll, getBuilds, getBuild, getLog, remove };

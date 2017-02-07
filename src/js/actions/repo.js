@@ -1,8 +1,11 @@
 import {
-  REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_REMOVE, USER_LOAD_REPOS
+  REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS, REPO_REMOVE,
+  USER_LOAD_REPOS
 } from '../actions';
 import { getUserRepos } from '../api/user';
-import { add, getAll, getBuilds, getRepo, remove } from '../api/repo';
+import {
+  add, getAll, getBuild, getBuilds, getLog, getRepo, remove
+} from '../api/repo';
 
 export function addRepo(repo) {
   return (dispatch) => {
@@ -64,6 +67,59 @@ export function loadBuilds(repoName) {
         },
         payload => dispatch(
           { type: REPO_GET_BUILDS, error: true, payload: payload.statusText }
+        )
+      );
+  };
+}
+
+function getJobKey(env) {
+  let jobKey = '';
+  Object.keys(env).forEach(key => jobKey += `${key}=${env[key]}`);
+  return jobKey;
+}
+
+export function loadBuildLogs(repoName, number) {
+  return (dispatch) => {
+    dispatch({ type: REPO_LOAD_BUILD_LOGS, loading: true });
+    getBuild(repoName, number)
+      .then(
+        (build) => {
+          const jobPromises = [];
+          build.jobs.forEach((job) => {
+            const jobPromise = getLog(repoName, number, job.number);
+            jobPromises.push(jobPromise);
+            jobPromise
+              .then(
+                (log) => {
+                  if (!build.logs) {
+                    build.logs = {};
+                  }
+                  const key = getJobKey(job.environment);
+                  build.logs[key !== '' ? key : number] = log;
+                },
+                payload => dispatch(
+                  {
+                    type: REPO_LOAD_BUILD_LOGS,
+                    error: true,
+                    payload: payload.statusText
+                  }
+                )
+              );
+          });
+
+          Promise.all(jobPromises).then(() => dispatch(
+            {
+              type: REPO_LOAD_BUILD_LOGS,
+              payload: build
+            }
+          ));
+        },
+        payload => dispatch(
+          {
+            type: REPO_LOAD_BUILD_LOGS,
+            error: true,
+            payload: payload.statusText
+          }
         )
       );
   };

@@ -14,13 +14,12 @@ class DroneMenuItem extends Component {
 
     this._onLocationChange = this._onLocationChange.bind(this);
 
-    const { path } = props;
+    const { path, root } = props;
     const { router } = context;
 
     this.state = {
-      active: router && path && router.isActive(path, {
-        indexLink: true
-      })
+      active: router && path && root ?
+        router.isActive(path, { indexLink: true }) : router.isActive(path)
     };
   }
 
@@ -29,6 +28,19 @@ class DroneMenuItem extends Component {
     if (path) {
       const { router } = this.context;
       this._unlisten = router.listen(this._onLocationChange);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { path } = this.props;
+    const { router } = this.context;
+
+    if (path !== nextProps.path) {
+      this.state = {
+        active: router && nextProps.path && nextProps.root ?
+          router.isActive(nextProps.path, { indexLink: true }) :
+          router.isActive(nextProps.path)
+      };
     }
   }
 
@@ -41,7 +53,8 @@ class DroneMenuItem extends Component {
 
   _onLocationChange(location) {
     const { path } = this.props;
-    const active = location.pathname === path;
+    const active = path === '/' ? location.pathname === path :
+      location.pathname.startsWith(path);
     this.setState({ active });
   }
 
@@ -72,6 +85,7 @@ DroneMenuItem.contextTypes = {
 DroneMenuItem.propTypes = {
   label: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
+  root: PropTypes.bool,
   status: PropTypes.string
 };
 
