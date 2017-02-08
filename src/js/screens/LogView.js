@@ -2,27 +2,23 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Anchor from 'grommet/components/Anchor';
-import Button from 'grommet/components/Button';
 import Box from 'grommet/components/Box';
 import Header from 'grommet/components/Header';
 import Heading from 'grommet/components/Heading';
 import Label from 'grommet/components/Label';
-import List from 'grommet/components/List';
-import ListItem from 'grommet/components/ListItem';
 import Paragraph from 'grommet/components/Paragraph';
-import Responsive from 'grommet/utils/Responsive';
 import LinkPrevious from 'grommet/components/icons/base/LinkPrevious';
+import Responsive from 'grommet/utils/Responsive';
 
-import LogViewer from '../components/LogViewer';
 import DroneStatusCircle from '../components/DroneStatusCircle';
-import StatusIcon from '../components/StatusIcon';
+import LogViewer from '../components/LogViewer';
 import NotFound from './NotFound';
 import { getJobKey, pageLoaded } from './utils';
 
 import { NAV_HIDE, NAV_SHOW } from '../actions';
-import { loadBuildLogs } from '../actions/repo';
+import { loadBuildLog } from '../actions/repo';
 
-class BuildView extends Component {
+class LogView extends Component {
   constructor() {
     super();
 
@@ -34,13 +30,13 @@ class BuildView extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, params: { owner, name, number } } = this.props;
+    const { dispatch, params: { owner, name, number, log } } = this.props;
     const fullName = `${owner}/${name}`;
 
-    dispatch(loadBuildLogs(fullName, number));
+    dispatch(loadBuildLog(fullName, number, log));
     dispatch({ type: NAV_HIDE });
 
-    pageLoaded(`${name} Build ${number} View`);
+    pageLoaded(`${name} Log ${log} View`);
 
     this._responsive = Responsive.start(this._onResponsive);
   }
@@ -57,7 +53,7 @@ class BuildView extends Component {
 
   render() {
     const {
-      build, error, params: { owner, name, number }
+      build, error, params: { owner, name, number, log }
     } = this.props;
     const { small } = this.state;
 
@@ -68,63 +64,56 @@ class BuildView extends Component {
     const repoName = `${owner}/${name}`;
 
     let content;
-    if (build) {
-      if (build.jobs.length > 1) {
-        const environmentNodes = build.jobs.map((job, index) => {
-          const path = `/${repoName}/build/${build.number}/${job.number}`;
-          return (
-            <ListItem key={`log-env-${index}`}>
-              <Button fill={true} path={path}>
-                <Box direction='row' responsive={false} justify='between'>
-                  <Label>
-                    {getJobKey(job.environment)}
-                  </Label>
-                  <Box direction='row' responsive={false} align='center'
-                    pad={{ between: 'small' }}>
-                    <Paragraph>#{job.number}</Paragraph>
-                    <StatusIcon status={job.status} />
-                  </Box>
-                </Box>
-              </Button>
-            </ListItem>
-          );
-        });
-        content = (
-          <List>
-            {environmentNodes}
-          </List>
+    let environmentTag;
+    let job;
+    if (build && build.log) {
+      content = (
+        <LogViewer log={build.log} />
+      );
+
+      build.jobs.some((j) => {
+        if (j.number.toString() === log) {
+          job = j;
+          return true;
+        }
+        return false;
+      });
+
+      environmentTag = small ?
+          (
+            <Box align='end'>
+              <Paragraph size='small' margin='none'>Build {number}</Paragraph>
+              <Paragraph size='small' margin='none'>
+                {getJobKey(job.environment)}
+              </Paragraph>
+            </Box>
+          ) : (
+            <Box align='end'>
+              <Label margin='none'>Build {number}</Label>
+              <Label margin='none'>
+                {getJobKey(job.environment)}
+              </Label>
+            </Box>
         );
-      } else if (build.logs) {
-        content = (
-          <LogViewer log={build.logs['1'].log} />
-        );
-      }
     }
 
-    let buildNode = (
-      <Label uppercase={true} margin='none'>Build {number}</Label>
-    );
-    if (small) {
-      buildNode = (
-        <Paragraph size='small' margin='none'>Build {number}</Paragraph>
-      );
-    }
     return (
       <Box colorIndex='grey-2' full='vertical'>
         <Header justify='between'
           pad={{ horizontal: 'small', vertical: 'medium' }}>
           <Box align='center' direction='row' responsive={false}
             pad={{ between: 'small' }}>
-            <Anchor a11yTitle={`Return to ${repoName}`} path={`/${repoName}`}
+            <Anchor a11yTitle={`Return to ${name} build ${number}`}
+              path={`/${repoName}/build/${number}`}
               icon={<LinkPrevious />} />
             <DroneStatusCircle status={
-              build ? build.status : 'unknown'
+              job ? job.status : 'unknown'
             } />
             <Heading tag={small ? 'h4' : 'h3'} margin='none'>
               {small ? name : repoName}
             </Heading>
           </Box>
-          {buildNode}
+          {environmentTag}
         </Header>
         <Box flex={true}>
           {content}
@@ -134,7 +123,7 @@ class BuildView extends Component {
   }
 }
 
-BuildView.propTypes = {
+LogView.propTypes = {
   build: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
   error: PropTypes.string,
@@ -143,4 +132,4 @@ BuildView.propTypes = {
 
 const select = state => ({ ...state.repo });
 
-export default connect(select)(BuildView);
+export default connect(select)(LogView);

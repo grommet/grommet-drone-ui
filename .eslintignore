@@ -3,3 +3,4 @@ dist/**
 dist-server/**
 coverage/**
 src/js/components/Logo.js
+src/js/components/StatusIcon.js

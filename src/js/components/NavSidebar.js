@@ -2,16 +2,17 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Box from 'grommet/components/Box';
+import Button from 'grommet/components/Button';
 import Sidebar from 'grommet/components/Sidebar';
 import Header from 'grommet/components/Header';
 import Footer from 'grommet/components/Footer';
+import Label from 'grommet/components/Label';
 import Menu from 'grommet/components/Menu';
 import Notification from 'grommet/components/Notification';
-import Anchor from 'grommet/components/Anchor';
-import ConnectIcon from 'grommet/components/icons/base/Connect';
 import Spinning from 'grommet/components/icons/Spinning';
 
 import DroneMenuItem from './DroneMenuItem';
+import Logo from './Logo';
 import SessionMenu from './SessionMenu';
 
 import { loadUserRepos, startUserReposStream } from '../actions/user';
@@ -40,7 +41,7 @@ class NavSidebar extends Component {
     if (repos) {
       reposNode = repos.map((repo, index) => (
         <DroneMenuItem key={`menu-item-${index}`} path={`/${repo.full_name}`}
-          label={repo.full_name} status={repo.status} />
+          label={repo.name} status={repo.status} />
       ));
     }
 
@@ -54,23 +55,27 @@ class NavSidebar extends Component {
       );
     }
 
-    let botMenuItem;
+    let botNode;
     if (bot && bot.name) {
-      botMenuItem = (
-        <DroneMenuItem path='/' label={bot.name} status='success' root={true} />
+      botNode = (
+        <span>{bot.name}</span>
       );
     }
 
     return (
       <Sidebar colorIndex='grey-3'>
-        <Header align='end' direction='column' pad='medium'>
-          <Anchor reverse={true} path='/manage' label='Manage Repos'
-            icon={<ConnectIcon />} />
+        <Header align='center' pad='medium'>
+          <Button path='/'>
+            <Box align='center' direction='row' responsive={false}
+              pad={{ between: 'small' }}>
+              <Logo />
+              <Label margin='none'>{botNode}</Label>
+            </Box>
+          </Button>
         </Header>
         {errorNode}
         <Menu fill={true} align='end'
           pad={{ vertical: 'small', between: 'small' }}>
-          {botMenuItem}
           {reposNode}
         </Menu>
         <Footer pad='small'>

@@ -2,6 +2,12 @@ import { announcePageLoaded } from 'grommet/utils/Announcer';
 
 const DEFAULT_TITLE = 'Drone CI';
 
+export function getJobKey(env) {
+  let jobKey = '';
+  Object.keys(env).forEach(key => jobKey += `${key}=${env[key]}`);
+  return jobKey;
+}
+
 export function pageLoaded(title) {
   if (document) {
     if (title && typeof title === 'string') {
@@ -14,4 +20,4 @@ export function pageLoaded(title) {
   }
 }
 
-export default { pageLoaded };
+export default { getJobKey, pageLoaded };

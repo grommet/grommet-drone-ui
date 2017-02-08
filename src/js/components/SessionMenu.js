@@ -18,6 +18,7 @@ class SessionMenu extends Component {
         <Box pad='medium'>
           <Label margin='none'>{user.login}</Label>
         </Box>
+        <Anchor path='/manage' label='Manage' />
         <Anchor href='/logout' label='Logout' />
       </Menu>
     );

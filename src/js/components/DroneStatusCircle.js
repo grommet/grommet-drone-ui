@@ -4,11 +4,11 @@ import classnames from 'classnames';
 const CLASS_ROOT = 'drone-status-circle';
 
 const DroneStatusCircle = (props) => {
-  const { active, status } = props;
+  const { size, status } = props;
 
   const classes = classnames(CLASS_ROOT, {
-    [`${CLASS_ROOT}--active`]: active,
-    [`${CLASS_ROOT}--${status}`]: status
+    [`${CLASS_ROOT}--${status}`]: status,
+    [`${CLASS_ROOT}--${size}`]: size
   });
 
   return (
@@ -20,8 +20,8 @@ const DroneStatusCircle = (props) => {
 };
 
 DroneStatusCircle.propTypes = {
-  active: PropTypes.bool,
-  status: PropTypes.string
+  status: PropTypes.string,
+  size: PropTypes.string
 };
 
 DroneStatusCircle.defaultProps = {

@@ -1,6 +1,6 @@
 import {
   REPO_ADD, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
-  REPO_LOAD_BUILD_LOGS, REPO_NEW_BUILD, REPO_REMOVE
+  REPO_LOAD_BUILD_LOGS, REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD, REPO_REMOVE
 } from '../actions';
 import { createReducer } from './utils';
 
@@ -29,6 +29,7 @@ const handlers = {
     if (!action.error && !action.loading) {
       return {
         loading: false,
+        error: undefined,
         allRepos: action.payload.sort(
           (a, b) => {
             if (a.full_name < b.full_name) return -1;
@@ -40,18 +41,21 @@ const handlers = {
     }
     if (action.loading) {
       return {
-        loading: true
+        loading: true,
+        error: undefined
       };
     }
     return { error: action.payload, loading: false };
   },
   [REPO_GET_BUILDS]: (state, action) => {
     if (!action.error && !action.loading) {
-      return { loading: false, repoWithBuilds: action.payload };
+      return {
+        loading: false, error: undefined, repoWithBuilds: action.payload
+      };
     }
     if (action.loading) {
       return {
-        loading: true, repoWithBuilds: undefined
+        loading: true, error: undefined, repoWithBuilds: undefined
       };
     }
     return { error: action.payload, loading: false, repoWithBuilds: undefined };
@@ -62,7 +66,18 @@ const handlers = {
     }
     if (action.loading) {
       return {
-        loading: true, build: undefined
+        loading: true, error: undefined, build: undefined
+      };
+    }
+    return { error: action.payload, loading: false, build: undefined };
+  },
+  [REPO_LOAD_BUILD_LOG]: (state, action) => {
+    if (!action.error && !action.loading) {
+      return { loading: false, error: undefined, build: action.payload };
+    }
+    if (action.loading) {
+      return {
+        loading: true, error: undefined, build: undefined
       };
     }
     return { error: action.payload, loading: false, build: undefined };

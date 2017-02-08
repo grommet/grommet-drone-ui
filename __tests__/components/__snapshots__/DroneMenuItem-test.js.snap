@@ -6,7 +6,7 @@ exports[`test DroneMenuItem renders 1`] = `
   onClick={undefined}
   title={undefined}>
   <div
-    className="grommetux-box grommetux-box--direction-row grommetux-box--align-center grommetux-box--responsive grommetux-box--pad-vertical-medium grommetux-box--pad-horizontal-medium grommetux-box--pad-between-small drone-menu-item"
+    className="grommetux-box grommetux-box--direction-row grommetux-box--align-center grommetux-box--pad-vertical-medium grommetux-box--pad-horizontal-medium grommetux-box--pad-between-small drone-menu-item"
     id={undefined}
     onClick={undefined}
     role={undefined}

@@ -1,6 +1,6 @@
 import {
-  REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS, REPO_REMOVE,
-  USER_LOAD_REPOS
+  REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
+  REPO_LOAD_BUILD_LOG, REPO_REMOVE, USER_LOAD_REPOS
 } from '../actions';
 import { getUserRepos } from '../api/user';
 import {
@@ -72,12 +72,6 @@ export function loadBuilds(repoName) {
   };
 }
 
-function getJobKey(env) {
-  let jobKey = '';
-  Object.keys(env).forEach(key => jobKey += `${key}=${env[key]}`);
-  return jobKey;
-}
-
 export function loadBuildLogs(repoName, number) {
   return (dispatch) => {
     dispatch({ type: REPO_LOAD_BUILD_LOGS, loading: true });
@@ -86,42 +80,76 @@ export function loadBuildLogs(repoName, number) {
         (build) => {
           const jobPromises = [];
           build.jobs.forEach((job) => {
-            const jobPromise = getLog(repoName, number, job.number);
-            jobPromises.push(jobPromise);
-            jobPromise
-              .then(
-                (log) => {
-                  if (!build.logs) {
-                    build.logs = {};
+            if (job.status !== 'pending' && job.status !== 'running') {
+              const jobPromise = getLog(repoName, number, job.number);
+              jobPromises.push(jobPromise);
+              jobPromise
+                .then(
+                  (log) => {
+                    if (!build.logs) {
+                      build.logs = {};
+                    }
+                    build.logs[job.number] = { job, log };
                   }
-                  const key = getJobKey(job.environment);
-                  build.logs[key !== '' ? key : number] = log;
-                },
-                payload => dispatch(
-                  {
-                    type: REPO_LOAD_BUILD_LOGS,
-                    error: true,
-                    payload: payload.statusText
-                  }
-                )
-              );
+                );
+            }
           });
 
-          Promise.all(jobPromises).then(() => dispatch(
+          return Promise.all(jobPromises).then(() => dispatch(
             {
               type: REPO_LOAD_BUILD_LOGS,
               payload: build
             }
           ));
-        },
-        payload => dispatch(
-          {
-            type: REPO_LOAD_BUILD_LOGS,
-            error: true,
-            payload: payload.statusText
+        }
+      )
+      .catch(payload => dispatch(
+        {
+          type: REPO_LOAD_BUILD_LOGS,
+          error: true,
+          payload: payload.statusText
+        }
+      ));
+  };
+}
+
+export function loadBuildLog(repoName, number, job) {
+  return (dispatch) => {
+    dispatch({ type: REPO_LOAD_BUILD_LOG, loading: true });
+    getBuild(repoName, number)
+      .then(
+        (build) => {
+          let isJobRunning = false;
+          build.jobs.some((j) => {
+            if (j.number.toString() === job) {
+              isJobRunning = j.status === 'running' || j.status === 'pending';
+              return true;
+            }
+            return false;
+          });
+          if (!isJobRunning) {
+            getLog(repoName, number, job)
+              .then(
+                (log) => {
+                  build.log = log;
+                  dispatch(
+                    {
+                      type: REPO_LOAD_BUILD_LOG,
+                      payload: build
+                    }
+                  );
+                }
+              );
           }
-        )
-      );
+        }
+      )
+      .catch(payload => dispatch(
+        {
+          type: REPO_LOAD_BUILD_LOG,
+          error: true,
+          payload: payload.statusText
+        }
+      ));
   };
 }
 
@@ -146,4 +174,6 @@ export function removeRepo(repo) {
   };
 }
 
-export default { addRepo, getAllRepos, loadBuilds, removeRepo };
+export default {
+  addRepo, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog, removeRepo
+};
