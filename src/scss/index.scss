@@ -23,6 +23,10 @@ b.drone-strong,
   word-wrap: break-word;
 }
 
+.drone-log-viewer__line-item {
+  max-width: 900px;
+}
+
 .drone-log-viewer__line-number {
   color: nth($brand-grey-colors, 5);
   margin-right: 12px;

@@ -208,7 +208,7 @@ class RepoView extends Component {
           pad={{ vertical: 'medium', horizontal: 'medium', between: 'medium' }}>
           {content}
         </Box>
-        <Footer full='horizontal' pad='medium'>
+        <Footer pad='medium'>
           <DroneMessageBox onSend={this._onMessageReceived} />
         </Footer>
         {navLayer}

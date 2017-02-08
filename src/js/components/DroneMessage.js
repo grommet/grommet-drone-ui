@@ -36,7 +36,8 @@ class DroneMessage extends Component {
     });
 
     return (
-      <Box responsive={false} align='end' className={classes} direction='row'
+      <Box flex={false} responsive={false} align='end'
+        className={classes} direction='row'
         pad={{ between: 'small', vertical: 'small' }}>
         {avatarNode}
         <Box pad={{ between: 'small' }} size={size}>

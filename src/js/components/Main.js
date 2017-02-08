@@ -16,12 +16,12 @@ class Main extends Component {
     if (!user) {
       mainNode = <Login />;
     } else if (nav && nav.hide) {
-      mainNode = <Box primary={true}>{children}</Box>;
+      mainNode = <Box full={true} primary={true}>{children}</Box>;
     } else {
       mainNode = (
         <Split flex='right' priority='right' fixed={true}>
           <NavSidebar />
-          <Box primary={true}>
+          <Box full={true} primary={true}>
             {children}
           </Box>
         </Split>

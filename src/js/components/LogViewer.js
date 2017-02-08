@@ -26,7 +26,8 @@ export default class LogViewer extends Component {
         if (line.out && line.out.trim() !== '') {
           if (line.type === 2) {
             linesNode.push(
-              <div key={`group-${index}-line-${lineIndex}`}>
+              <div key={`group-${index}-line-${lineIndex}`}
+                className={`${CLASS_ROOT}__line-item`}>
                 <span className={`${CLASS_ROOT}__line-number`}>
                   exit code
                 </span>
@@ -35,7 +36,8 @@ export default class LogViewer extends Component {
             );
           } else {
             linesNode.push(
-              <div key={`group-${index}-line-${lineIndex}`}>
+              <div key={`group-${index}-line-${lineIndex}`}
+                className={`${CLASS_ROOT}__line-item`}>
                 <span className={`${CLASS_ROOT}__line-number`}>
                   [{line.pos + 1}]
                 </span>
