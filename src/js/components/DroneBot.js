@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Box from 'grommet/components/Box';
+import Footer from 'grommet/components/Footer';
 
 import Avatar from './Avatar';
 import DroneMessage from './DroneMessage';
@@ -17,7 +18,7 @@ class DroneBot extends Component {
     this._onMessageReceived = this._onMessageReceived.bind(this);
 
     this.state = {
-      customMessages: []
+      customMessages: ['b', 'c', 'd', 'e', 'f', 'g', 'f']
     };
   }
 
@@ -56,11 +57,13 @@ class DroneBot extends Component {
     }
 
     return (
-      <Box colorIndex='grey-2' full={true} pad='medium'>
-        <Box flex={true}>
+      <Box colorIndex='grey-2' full='vertical'>
+        <Box flex={true} pad='medium'>
           {messagesNode}
         </Box>
-        <DroneMessageBox onSend={this._onMessageReceived} />
+        <Footer flex={false} pad='medium'>
+          <DroneMessageBox onSend={this._onMessageReceived} />
+        </Footer>
       </Box>
     );
   }

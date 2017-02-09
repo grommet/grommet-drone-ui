@@ -44,7 +44,9 @@ class DroneMessage extends Component {
           <Box direction='row'
             pad='small' className={`${CLASS_ROOT}__container`}
             colorIndex={colorIndex}>
-            {message}
+            <Paragraph margin='none'>
+              {message}
+            </Paragraph>
           </Box>
           <Paragraph size='small' margin='none'
             className={`${CLASS_ROOT}__timestamp`}>

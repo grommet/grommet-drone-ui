@@ -99,9 +99,7 @@ class RepoView extends Component {
     if (repo && (!repo.builds || repo.builds.length === 0)) {
       content = [
         <DroneMessage key='empty-repo-message'
-          message={<Paragraph margin='none'>
-            This repo does not have any build yet.
-          </Paragraph>} />,
+          message='This repo does not have any build yet.' />,
         <DroneMessage key='drone-config-reference'
           message={<Paragraph margin='none'>
             Check out the <Anchor target='_blank' label='get started'
@@ -217,7 +215,7 @@ class RepoView extends Component {
           pad={{ vertical: 'medium', horizontal: 'medium', between: 'medium' }}>
           {content}
         </Box>
-        <Footer pad='medium'>
+        <Footer flex={false} pad='medium'>
           <DroneMessageBox onSend={this._onMessageReceived} />
         </Footer>
         {navLayer}
