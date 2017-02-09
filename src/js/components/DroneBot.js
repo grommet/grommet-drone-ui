@@ -18,7 +18,7 @@ class DroneBot extends Component {
     this._onMessageReceived = this._onMessageReceived.bind(this);
 
     this.state = {
-      customMessages: ['b', 'c', 'd', 'e', 'f', 'g', 'f']
+      customMessages: []
     };
   }
 

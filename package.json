@@ -23,7 +23,7 @@
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
-    "grommet": "^1.1.0",
+    "grommet": "https://github.com/grommet/grommet/tarball/stable",
     "humanize-duration": "^3.10.0",
     "morgan": "^1.7.0",
     "path-to-regexp": "^1.7.0",
