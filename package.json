@@ -86,6 +86,7 @@
     ]
   },
   "pre-commit": [
-    "test"
+    "test",
+    "dist"
   ]
 }

@@ -37,20 +37,36 @@ class NavSidebar extends Component {
       );
     }
 
-    let reposNode;
+    let contentNode;
     if (repos) {
-      reposNode = repos.map((repo, index) => (
+      const reposNode = repos.map((repo, index) => (
         <DroneMenuItem key={`menu-item-${index}`} path={`/${repo.full_name}`}
           label={repo.name} status={repo.status} />
       ));
+
+      contentNode = (
+        <Menu fill={true} align='end'
+          pad={{ vertical: 'small', between: 'small' }}>
+          {reposNode}
+        </Menu>
+      );
     }
 
     if (loading) {
-      reposNode = (
-        <Box responsive={false} direction='row'
+      contentNode = (
+        <Box flex={true} align='start' justify='end'
+          responsive={false} direction='row'
           pad={{ between: 'small', vertical: 'medium', horizontal: 'medium' }}>
           <Spinning />
           <span>Loading...</span>
+        </Box>
+      );
+    } else if (repos && repos.length === 0) {
+      contentNode = (
+        <Box flex={true} align='start' responsive={false} direction='row'
+          justify='center'
+          pad={{ between: 'small', vertical: 'medium', horizontal: 'medium' }}>
+          <Button path='/manage' primary={true} label='Add my first repo' />
         </Box>
       );
     }
@@ -74,10 +90,7 @@ class NavSidebar extends Component {
           </Button>
         </Header>
         {errorNode}
-        <Menu fill={true} align='end'
-          pad={{ vertical: 'small', between: 'small' }}>
-          {reposNode}
-        </Menu>
+        {contentNode}
         <Footer pad='small'>
           <SessionMenu />
           {user.login}

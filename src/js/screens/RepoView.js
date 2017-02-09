@@ -97,10 +97,19 @@ class RepoView extends Component {
 
     let content;
     if (repo && (!repo.builds || repo.builds.length === 0)) {
-      content = (
+      content = [
         <DroneMessage key='empty-repo-message'
-          message='This repo does not have any build yet. Add a .drone.yml to get started...' />
-      );
+          message={<Paragraph margin='none'>
+            This repo does not have any build yet.
+          </Paragraph>} />,
+        <DroneMessage key='drone-config-reference'
+          message={<Paragraph margin='none'>
+            Check out the <Anchor target='_blank' label='get started'
+              href='http://readme.drone.io/usage/getting-started/' /> page for
+            instructions on how to create your first .drone.yml. Or simply push
+            a new commit if you already have it.
+          </Paragraph>} />
+      ];
     } else if (repo && repo.builds) {
       content = repo.builds.map((build, index) => {
         const message = (

@@ -20,7 +20,7 @@ import Loading from '../components/Loading';
 import {
   addRepo, getAllRepos, removeRepo
 } from '../actions/repo';
-import { REPO_CLEAR_MESSAGE } from '../actions';
+import { REPO_CLEAR_MESSAGE, NAV_HIDE, NAV_SHOW } from '../actions';
 import { pageLoaded } from './utils';
 
 class RepoCheckBox extends Component {
@@ -72,9 +72,17 @@ class ManageRepos extends Component {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
+
     pageLoaded('Manage Repos');
 
-    this.props.dispatch(getAllRepos());
+    dispatch(getAllRepos());
+    dispatch({ type: NAV_HIDE });
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({ type: NAV_SHOW });
   }
 
   _onRepoChange(repo) {
@@ -132,7 +140,7 @@ class ManageRepos extends Component {
       reposNode = <Loading />;
     }
     return (
-      <Box full={true}>
+      <Box full={true} colorIndex='grey-2'>
         <Box flex={false}>
           {toastNode}
           <Header align='start' direction='column'

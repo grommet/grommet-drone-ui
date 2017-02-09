@@ -2,7 +2,7 @@ import { USER_LOAD_REPOS, USER_UPDATE_REPO } from '../actions';
 import { createReducer } from './utils';
 
 const initialState = {
-  repos: []
+  repos: undefined
 };
 
 const handlers = {
