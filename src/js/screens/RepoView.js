@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import humanizeDuration from 'humanize-duration';
+import moment from 'moment';
 
 import Anchor from 'grommet/components/Anchor';
 import Button from 'grommet/components/Button';
@@ -132,12 +132,12 @@ class RepoView extends Component {
                   <Paragraph margin='none'>#{build.number}</Paragraph>
                   <StatusIcon status={build.status} />
                 </Box>
-                <Paragraph size='small' margin='none'>{
+                <Paragraph align='end' size='small' margin='none'>{
                   build.status === 'pending' || build.status === 'running' ?
                     'Running' :
-                    `Finished in ${humanizeDuration(
+                    `Finished ${moment.duration(
                       (build.finished_at - build.started_at) * 1000
-                    )}`
+                    ).humanize(true)}`
                 }</Paragraph>
               </Box>
             </Box>

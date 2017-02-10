@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Box from 'grommet/components/Box';
 import Footer from 'grommet/components/Footer';
+import Paragraph from 'grommet/components/Paragraph';
 
 import Avatar from './Avatar';
 import DroneMessage from './DroneMessage';
@@ -39,10 +40,10 @@ class DroneBot extends Component {
     let messagesNode;
     if (bot) {
       const messages = [
-        <span>
+        <Paragraph margin='none'>
           {`Hey ${user.login}, I’m your personal drone, `}
           <b className='drone-strong'>{bot.name}</b>.
-        </span>,
+        </Paragraph>,
         'Choose a project or type "help" to get started.'
       ];
 

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-import Timeago from 'timeago.js';
+import moment from 'moment';
 
 import Box from 'grommet/components/Box';
 import Paragraph from 'grommet/components/Paragraph';
@@ -22,13 +22,22 @@ class DroneMessage extends Component {
       if ((today - messageDate) < ONE_MINUTE) {
         timeAgo = 'Just now';
       } else {
-        timeAgo = new Timeago().format(messageDate);
+        timeAgo = moment(messageDate).fromNow();
       }
     }
 
     let avatarNode = <Logo />;
     if (avatar) {
       avatarNode = avatar;
+    }
+
+    let messageNode = message;
+    if (typeof messageNode === 'string') {
+      messageNode = (
+        <Paragraph margin='none'>
+          {message}
+        </Paragraph>
+      );
     }
 
     const classes = classnames(CLASS_ROOT, {
@@ -44,9 +53,7 @@ class DroneMessage extends Component {
           <Box direction='row'
             pad='small' className={`${CLASS_ROOT}__container`}
             colorIndex={colorIndex}>
-            <Paragraph margin='none'>
-              {message}
-            </Paragraph>
+            {messageNode}
           </Box>
           <Paragraph size='small' margin='none'
             className={`${CLASS_ROOT}__timestamp`}>
