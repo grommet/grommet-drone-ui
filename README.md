@@ -1,6 +1,6 @@
 # grommet-drone-ui
 
-This is a sample Grommet application for reference.
+This is a Work in Progress UI for [Drone](https://github.com/drone/drone) based on [Grommet](https://grommet.github.io).
 
 To run this application, execute the following commands:
 
@@ -10,17 +10,15 @@ To run this application, execute the following commands:
     $ npm install (or yarn install)
     ```
 
-  2. Start the back-end server:
-
-    ```
-    $ npm run dev-server
-    ```
+  2. Make sure you have a Drone back-end running somewhere. Default is http://localhost:8050.
 
   3. Start the front-end dev server:
 
     ```
-    $ npm run dev
+    $ npm run dev (or HOST=localhost:8000 npm run dev)
     ```
+    
+    This will start the UI server at http://localhost:3000/
 
   4. Create the app distribution to be used by a back-end server
 
@@ -28,13 +26,7 @@ To run this application, execute the following commands:
     $ NODE_ENV=production grommet pack
     ```
 
-  5. Start the server in production mode:
-
-    ```
-    $ npm start
-    ```
-
-  6. Test and run linters:
+  5. Test and run linters:
 
     ```
     $ npm test
