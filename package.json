@@ -14,7 +14,7 @@
   "scripts": {
     "test": "grommet check",
     "embed": "go-bindata-assetfs -ignore 'map|go' -pkg dist -nocompress=true dist/...",
-    "dev": "cross-env HOST=localhost:8050 NODE_ENV=development grommet pack",
+    "dev": "cross-env HOST=${HOST:=localhost:8050} NODE_ENV=development grommet pack",
     "dist": "cross-env NODE_ENV=production grommet pack"
   },
   "dependencies": {
