@@ -63,20 +63,20 @@ export function getLog(repoName, number, job) {
   return fetch(
     `/api/repos/${repoName}/logs/${number}/${job}`, options
   ).then(parseJSON).then((lines) => {
-    const procs = {};
+    const log = {};
 
     // this code groups the lines of output by process.
     lines.forEach((line) => {
       if (!line || !line.proc || !line.out) return;
-      let proc = procs[line.proc];
+      let proc = log[line.proc];
       if (!proc) {
         proc = [];
-        procs[line.proc] = proc;
+        log[line.proc] = proc;
       }
       proc.push(line);
     });
 
-    return Promise.resolve(procs);
+    return Promise.resolve(log);
   });
 }
 

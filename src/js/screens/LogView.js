@@ -16,7 +16,8 @@ import NotFound from './NotFound';
 import { getJobKey, pageLoaded } from './utils';
 
 import { NAV_HIDE, NAV_SHOW } from '../actions';
-import { loadBuildLog } from '../actions/repo';
+import { startUserReposStream } from '../actions/user';
+import { loadBuildLog, startLogStream, stopLogStream } from '../actions/repo';
 
 class LogView extends Component {
   constructor() {
@@ -41,10 +42,37 @@ class LogView extends Component {
     this._responsive = Responsive.start(this._onResponsive);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { build, dispatch, params: { owner, name, log } } = nextProps;
+    const fullName = `${owner}/${name}`;
+
+    const isAlreadyRunning = (
+      this.props.build && this.props.build.status === 'running'
+    );
+
+    if (!isAlreadyRunning && build && build.status === 'running') {
+      this._runningJob = undefined;
+      build.jobs.some((j) => {
+        if (j.number.toString() === log) {
+          this._runningJob = j;
+          return true;
+        }
+        return false;
+      }, this);
+      // needed to get the build status after job is finished
+      dispatch(startUserReposStream());
+      dispatch(startLogStream(fullName, build, this._runningJob));
+    }
+  }
+
   componentWillUnmount() {
-    const { dispatch } = this.props;
+    const { build, dispatch } = this.props;
     this._responsive.stop();
     dispatch({ type: NAV_SHOW });
+
+    if (build && this._runningJob) {
+      stopLogStream(build, this._runningJob);
+    }
   }
 
   _onResponsive(small) {
@@ -107,7 +135,7 @@ class LogView extends Component {
               path={`/${repoName}/build/${number}`}
               icon={<LinkPrevious />} />
             <DroneStatusCircle status={
-              job ? job.status : 'unknown'
+              build ? build.status : 'unknown'
             } />
             <Heading tag={small ? 'h4' : 'h3'} margin='none'>
               {small ? name : repoName}

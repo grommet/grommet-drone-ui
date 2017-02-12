@@ -18,33 +18,51 @@ export default class WSWatcher {
     } else {
       throw new Error('Option url is required');
     }
+
+    this._ws = {};
   }
 
   watch(uri, onMessage) {
-    this._ws = new WebSocket(`${this._options.url}${uri}`);
-    this._ws.onopen = this._onOpen.bind(this);
-    this._ws.onmessage = onMessage;
-    this._ws.onclose = this._onClose.bind(this);
+    const socket = new WebSocket(`${this._options.url}${uri}`);
+    socket.onopen = this._onOpen.bind(this);
+    socket.onmessage = onMessage;
+    socket.ondisconnect = this._onError.bind(this, uri);
+    socket.onclose = this._onClose.bind(this, uri);
+
+    this._ws[uri] = socket;
 
     return {
       close: () => {
-        this._closed = true;
-        this._ws.close();
+        this._ws[uri]._closed = true;
+        this._ws[uri].close();
       }
     };
+  }
+
+  _onError(uri) {
+    if (this._ws[uri]) {
+      this._ws[uri]._errored = true;
+    }
   }
 
   _onOpen() {
     clearInterval(this._pollTimer);
   }
 
-  _onClose() {
-    this._ws = undefined;
-    if (!this._closed) {
-      // lost connection, retry in a bit
-      this._pollTimer = setTimeout(
-        this._initialize.bind(this), this._options.reconnectTimeout
-      );
+  _onClose(uri) {
+    if (this._ws[uri]) {
+      const watch = this.watch;
+      const onMessage = this._ws[uri].onmessage;
+      const errored = this._ws[uri]._errored;
+
+      this._ws[uri] = undefined;
+      if (errored) {
+        // lost connection, retry in a bit
+        this._pollTimer = setTimeout(
+          watch.bind(this, uri, onMessage),
+          this._options.reconnectTimeout
+        );
+      }
     }
   }
 }

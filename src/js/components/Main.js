@@ -15,12 +15,14 @@ class Main extends Component {
     let mainNode;
     if (!user) {
       mainNode = <Login />;
-    } else if (nav && nav.hide) {
-      mainNode = <Box full={true} primary={true}>{children}</Box>;
     } else {
+      let sidebar = <NavSidebar />;
+      if (nav && nav.hide) {
+        sidebar = undefined;
+      }
       mainNode = (
         <Split flex='right' priority='right' fixed={true}>
-          <NavSidebar />
+          {sidebar}
           <Box full={true} primary={true}>
             {children}
           </Box>

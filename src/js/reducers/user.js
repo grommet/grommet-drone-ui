@@ -24,7 +24,7 @@ const handlers = {
     return { error: action.payload, loading: false };
   },
   [USER_UPDATE_REPO]: (state, action) => {
-    const updateRepos = state.repos.map((repo) => {
+    const updateRepos = (state.repos || []).map((repo) => {
       if (repo.full_name === action.payload.full_name) {
         return action.payload;
       }

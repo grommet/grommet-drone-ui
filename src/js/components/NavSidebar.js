@@ -15,7 +15,9 @@ import DroneMenuItem from './DroneMenuItem';
 import Logo from './Logo';
 import SessionMenu from './SessionMenu';
 
-import { loadUserRepos, startUserReposStream } from '../actions/user';
+import {
+  loadUserRepos, startUserReposStream
+} from '../actions/user';
 import { loadBot } from '../actions/bot';
 
 class NavSidebar extends Component {

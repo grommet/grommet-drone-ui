@@ -20,7 +20,8 @@ import NotFound from './NotFound';
 import { getJobKey, pageLoaded } from './utils';
 
 import { NAV_HIDE, NAV_SHOW } from '../actions';
-import { loadBuildLogs } from '../actions/repo';
+import { startUserReposStream } from '../actions/user';
+import { loadBuildLogs, startLogStream, stopLogStream } from '../actions/repo';
 
 class BuildView extends Component {
   constructor() {
@@ -38,6 +39,7 @@ class BuildView extends Component {
     const fullName = `${owner}/${name}`;
 
     dispatch(loadBuildLogs(fullName, number));
+
     dispatch({ type: NAV_HIDE });
 
     pageLoaded(`${name} Build ${number} View`);
@@ -45,9 +47,28 @@ class BuildView extends Component {
     this._responsive = Responsive.start(this._onResponsive);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { build, dispatch, params: { owner, name } } = nextProps;
+    const fullName = `${owner}/${name}`;
+
+    const isAlreadyRunning = (
+      this.props.build && this.props.build.status === 'running'
+    );
+
+    if (!isAlreadyRunning && build && build.status === 'running' &&
+      build.jobs.length === 1) {
+      // needed to get the build status after job is finished
+      dispatch(startUserReposStream());
+      dispatch(startLogStream(fullName, build, build.jobs[0]));
+    }
+  }
+
   componentWillUnmount() {
-    const { dispatch } = this.props;
+    const { build, dispatch } = this.props;
     this._responsive.stop();
+    if (build && build.jobs.length === 1) {
+      stopLogStream(build, build.jobs[0]);
+    }
     dispatch({ type: NAV_SHOW });
   }
 
@@ -94,9 +115,9 @@ class BuildView extends Component {
             {environmentNodes}
           </List>
         );
-      } else if (build.logs) {
+      } else if (build.log) {
         content = (
-          <LogViewer log={build.logs['1'].log} />
+          <LogViewer log={build.log} />
         );
       }
     }

@@ -1,11 +1,15 @@
 import {
   REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
-  REPO_LOAD_BUILD_LOG, REPO_REMOVE, USER_LOAD_REPOS
+  REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD_LOG, REPO_REMOVE, USER_LOAD_REPOS
 } from '../actions';
 import { getUserRepos } from '../api/user';
 import {
   add, getAll, getBuild, getBuilds, getLog, getRepo, remove
 } from '../api/repo';
+
+import { watcher } from './utils';
+
+const logStreamSocket = {};
 
 export function addRepo(repo) {
   return (dispatch) => {
@@ -95,6 +99,14 @@ export function loadBuildLogs(repoName, number) {
             }
           });
 
+          if (jobPromises.length === 0) {
+            return dispatch(
+              {
+                type: REPO_LOAD_BUILD_LOGS,
+                payload: build
+              }
+            );
+          }
           return Promise.all(jobPromises).then(() => dispatch(
             {
               type: REPO_LOAD_BUILD_LOGS,
@@ -119,15 +131,17 @@ export function loadBuildLog(repoName, number, job) {
     getBuild(repoName, number)
       .then(
         (build) => {
-          let isJobRunning = false;
+          let isJobRunningOrPending = false;
           build.jobs.some((j) => {
             if (j.number.toString() === job) {
-              isJobRunning = j.status === 'running' || j.status === 'pending';
+              isJobRunningOrPending = (
+                j.status === 'running' || j.status === 'pending'
+              );
               return true;
             }
             return false;
           });
-          if (!isJobRunning) {
+          if (!isJobRunningOrPending) {
             getLog(repoName, number, job)
               .then(
                 (log) => {
@@ -135,11 +149,20 @@ export function loadBuildLog(repoName, number, job) {
                   dispatch(
                     {
                       type: REPO_LOAD_BUILD_LOG,
+                      repoName,
                       payload: build
                     }
                   );
                 }
               );
+          } else {
+            dispatch(
+              {
+                type: REPO_LOAD_BUILD_LOG,
+                repoName,
+                payload: build
+              }
+            );
           }
         }
       )
@@ -174,6 +197,34 @@ export function removeRepo(repo) {
   };
 }
 
+export function startLogStream(repoName, build, job) {
+  return (dispatch) => {
+    if (!logStreamSocket[build.number]) {
+      logStreamSocket[build.number] = {};
+    }
+    const buildSockets = logStreamSocket[build.number];
+    if (!buildSockets[job.number]) {
+      // only start socket connections if there is a new job to add
+      const socketUrl = `/ws/logs/${repoName}/${build.number}/${job.number}`;
+      buildSockets[job.number] = watcher.watch(socketUrl, (message) => {
+        const logMessage = JSON.parse(message.data);
+        if (logMessage && logMessage.proc && logMessage.out) {
+          dispatch({ type: REPO_NEW_BUILD_LOG, payload: logMessage });
+        }
+      });
+    }
+  };
+}
+
+export function stopLogStream(build, job) {
+  const buildSockets = logStreamSocket[build.number];
+  if (buildSockets && buildSockets[job.number]) {
+    buildSockets[job.number].close();
+    buildSockets[job.number] = undefined;
+  }
+}
+
 export default {
-  addRepo, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog, removeRepo
+  addRepo, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog, removeRepo,
+  startLogStream, stopLogStream
 };
