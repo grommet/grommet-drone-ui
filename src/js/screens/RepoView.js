@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -27,6 +28,7 @@ import NotFound from './NotFound';
 import { pageLoaded } from './utils';
 
 import { loadBuilds } from '../actions/repo';
+import { loadBot, processInContextMessage } from '../actions/bot';
 
 class RepoView extends Component {
 
@@ -35,9 +37,11 @@ class RepoView extends Component {
 
     this._onMessageReceived = this._onMessageReceived.bind(this);
     this._onResponsive = this._onResponsive.bind(this);
+    this._scrollToBottom = this._scrollToBottom.bind(this);
 
     this.state = {
-      customMessages: [],
+      activeMessage: undefined,
+      botResponse: undefined,
       small: false,
       showNav: false
     };
@@ -47,28 +51,50 @@ class RepoView extends Component {
     const { dispatch, params: { owner, name } } = this.props;
     const fullName = `${owner}/${name}`;
 
+    dispatch(loadBot());
     dispatch(loadBuilds(fullName));
 
     pageLoaded(`${fullName} View`);
 
     this._responsive = Responsive.start(this._onResponsive);
+
+    this._scrollToBottom();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { dispatch, params: { owner, name } } = nextProps;
+    const { bot, dispatch, params: { owner, name } } = nextProps;
     const fullName = `${owner}/${name}`;
     const previousOwner = this.props.params.owner;
     const previousName = this.props.params.name;
     const previousFullName = `${previousOwner}/${previousName}`;
+
+    let botResponse;
+    if (bot && bot.response !== this.state.botResponse) {
+      botResponse = bot.response;
+    }
+
+    let activeMessage = this.state.activeMessage;
     if (fullName !== previousFullName) {
+      activeMessage = undefined; // clear messages if you are in another repo
+      botResponse = undefined; // clear messages if you are in another repo
       dispatch(loadBuilds(fullName));
     }
 
-    this.setState({ customMessages: [], showNav: false });
+    this.setState(
+      { activeMessage, showNav: false, botResponse },
+      () => this._scrollToBottom()
+    );
   }
 
   componentWillUnmount() {
     this._responsive.stop();
+  }
+
+  _scrollToBottom() {
+    if (this._chatRef) {
+      const chatBoxNode = findDOMNode(this._chatRef);
+      chatBoxNode.scrollTop = chatBoxNode.scrollHeight;
+    }
   }
 
   _onResponsive(small) {
@@ -76,16 +102,20 @@ class RepoView extends Component {
   }
 
   _onMessageReceived(message) {
-    const customMessages = this.state.customMessages;
-    customMessages.push(message);
-    this.setState({ customMessages });
+    const { dispatch, params: { owner, name } } = this.props;
+    const fullName = `${owner}/${name}`;
+    this.setState({
+      activeMessage: message, botResponse: 'Ok, let me process this...'
+    }, () => (
+      dispatch(processInContextMessage(message, fullName))
+    ));
   }
 
   render() {
     const {
-      error, params: { owner, name }, repoWithBuilds
+      error, params: { owner, name }, repoWithBuilds, session: { user }
     } = this.props;
-    const { small, showNav } = this.state;
+    const { activeMessage, botResponse, small, showNav } = this.state;
 
     if (error) {
       return <NotFound />;
@@ -151,6 +181,28 @@ class RepoView extends Component {
       });
     }
 
+    if (content && activeMessage) {
+      content.push(
+        <DroneMessage key='active-message' message={activeMessage}
+          colorIndex='grey-4'
+          avatar={<Avatar src={user.avatar_url} name={user.login} />} />
+      );
+    }
+
+    if (content && botResponse) {
+      if (Array.isArray(botResponse)) {
+        content = content.concat(
+          botResponse.map((response, index) => (
+            <DroneMessage key={`bot-response${index}`} message={response} />
+          ))
+        );
+      } else {
+        content.push(
+          <DroneMessage key='bot-response' message={botResponse} />
+        );
+      }
+    }
+
     let headerNode = (
       <Header justify='between' pad='medium'>
         <Box align='center' direction='row' responsive={false}
@@ -211,7 +263,7 @@ class RepoView extends Component {
     return (
       <Box colorIndex='grey-2' full='vertical'>
         {headerNode}
-        <Box flex={true}
+        <Box ref={ref => this._chatRef = ref} flex={true}
           pad={{ vertical: 'medium', horizontal: 'medium', between: 'medium' }}>
           {content}
         </Box>
@@ -225,12 +277,16 @@ class RepoView extends Component {
 }
 
 RepoView.propTypes = {
+  bot: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
   error: PropTypes.string,
   params: PropTypes.object.isRequired,
   repoWithBuilds: PropTypes.object,
+  session: PropTypes.object
 };
 
-const select = state => ({ ...state.repo });
+const select = state => (
+  { ...state.bot, ...state.repo, session: state.session }
+);
 
 export default connect(select)(RepoView);

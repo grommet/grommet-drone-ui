@@ -4,6 +4,7 @@ import DroneCLI from '../cli/DroneCLI';
 import addProjectCommand from '../cli/add-project-command';
 import removeProjectCommand from '../cli/remove-project-command';
 import restartProjectCommand from '../cli/restart-project-command';
+import restartInContextCommand from '../cli/restart-in-context-command';
 
 let assignedBot;
 
@@ -13,6 +14,9 @@ const cli = new DroneCLI();
 cli.use(addProjectCommand);
 cli.use(removeProjectCommand);
 cli.use(restartProjectCommand);
+
+const inContextCli = new DroneCLI();
+inContextCli.use(restartInContextCommand);
 
 function getRandomBot() {
   const randomPrefix = PREFIXES[Math.floor(Math.random() * PREFIXES.length)];
@@ -31,12 +35,21 @@ export function loadBot() {
   };
 }
 
+export function processInContextMessage(message, context) {
+  return dispatch => inContextCli.addContext(context).run(message)
+    .then(result => (
+      dispatch({ type: BOT_NEW_MESSAGE, payload: result })
+    ), result => (
+      dispatch({ type: BOT_NEW_MESSAGE, payload: result })
+    ));
+}
+
 export function processMessage(message) {
-  return dispatch => cli.addDispatch(dispatch).run(message).then(result => (
+  return dispatch => cli.addContext(dispatch).run(message).then(result => (
     dispatch({ type: BOT_NEW_MESSAGE, payload: result })
   ), result => (
     dispatch({ type: BOT_NEW_MESSAGE, payload: result })
   ));
 }
 
-export default { loadBot, processMessage };
+export default { loadBot, processInContextMessage, processMessage };

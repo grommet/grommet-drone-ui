@@ -133,13 +133,13 @@ export default class DroneCLI {
       if (matchCommand) {
         const args = getArgsForCommand(matchCommand, task);
         if (matchCommand.validate) {
-          const result = matchCommand.validate(args);
+          const result = matchCommand.validate(args, this._context);
           if (result === true) {
-            return matchCommand.action(args, this._dispatch);
+            return matchCommand.action(args, this._context);
           }
           return Promise.reject(result);
         }
-        return matchCommand.action(args, this._dispatch);
+        return matchCommand.action(args, this._context);
       }
     } catch (e) {
       return Promise.reject(e.message);
@@ -188,8 +188,8 @@ export default class DroneCLI {
     throw Error('Name and description is mandatory');
   }
 
-  addDispatch(dispatch) {
-    this._dispatch = dispatch;
+  addContext(context) {
+    this._context = context;
 
     return this;
   }

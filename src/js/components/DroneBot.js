@@ -100,8 +100,8 @@ class DroneBot extends Component {
 }
 
 DroneBot.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   bot: PropTypes.object,
+  dispatch: PropTypes.func.isRequired,
   session: PropTypes.object
 };
 
