@@ -91,4 +91,15 @@ export function remove(repo) {
     .then(processResponse);
 }
 
+export function restart(repoName, number) {
+  const options = {
+    headers: headers(),
+    method: 'POST',
+    credentials: 'include'
+  };
+
+  return fetch(`/api/repos/${repoName}/builds/${number}`, options)
+    .then(processResponse);
+}
+
 export default { add, getAll, getBuilds, getBuild, getLog, remove };

@@ -1,0 +1,29 @@
+exports[`test DroneCLI fails for invalid args 1`] = `
+Array [
+  "Sure, here are the commands I can process...",
+  "help [command]",
+]
+`;
+
+exports[`test DroneCLI fails for invalid args 2`] = `
+Array [
+  "This command provides help for other commands, interesting...",
+]
+`;
+
+exports[`test DroneCLI fails for invalid args 3`] = `"Sorry, I can\'t process this task."`;
+
+exports[`test DroneCLI fails for invalid args 4`] = `
+Array [
+  "Sure, here are the commands I can process...",
+  "help [command], restart [project]",
+]
+`;
+
+exports[`test DroneCLI fails for invalid args 5`] = `
+Array [
+  "Restarts a given build for a project",
+  "Optional. Number of the build to restart. Defaults to the last build",
+  "Optional. Fake description",
+]
+`;

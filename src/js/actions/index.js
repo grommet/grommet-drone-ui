@@ -2,6 +2,7 @@
 
 // Bot
 export const BOT_LOAD = 'BOT_LOAD';
+export const BOT_NEW_MESSAGE = 'BOT_NEW_MESSAGE';
 
 // Nav
 export const NAV_HIDE = 'NAV_HIDE';

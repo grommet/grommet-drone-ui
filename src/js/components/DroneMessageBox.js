@@ -11,15 +11,18 @@ class DroneMessageBox extends Component {
 
     this._onMessageChange = this._onMessageChange.bind(this);
     this._onSendMessage = this._onSendMessage.bind(this);
+    this._onPreviousMessage = this._onPreviousMessage.bind(this);
 
     this.state = {
-      message: ''
+      message: '',
+      previousMessage: ''
     };
   }
 
   componentDidMount() {
     this._keys = {
-      enter: this._onSendMessage
+      enter: this._onSendMessage,
+      up: this._onPreviousMessage,
     };
 
     KeyboardAccelerators.startListeningToKeyboard(this, this._keys);
@@ -36,9 +39,17 @@ class DroneMessageBox extends Component {
   _onSendMessage() {
     const { onSend } = this.props;
     const { message } = this.state;
-    this.setState({ message: '' }, () => {
+    this.setState({ message: '', previousMessage: message.trim() }, () => {
       onSend(message.trim());
     });
+  }
+
+  _onPreviousMessage(event) {
+    const { previousMessage } = this.state;
+    if (previousMessage !== '') {
+      event.preventDefault();
+      this.setState({ message: previousMessage, previousMessage: '' });
+    }
   }
 
   render() {
@@ -46,7 +57,8 @@ class DroneMessageBox extends Component {
 
     return (
       <Box full='horizontal' className={CLASS_ROOT} colorIndex='light-1'>
-        <input type='text' value={message} onChange={this._onMessageChange}
+        <input type='text' value={message}
+          onChange={this._onMessageChange}
           placeholder='E.g: "help" (Press enter to send)' />
       </Box>
     );

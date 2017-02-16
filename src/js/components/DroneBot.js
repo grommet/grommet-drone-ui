@@ -9,7 +9,7 @@ import Avatar from './Avatar';
 import DroneMessage from './DroneMessage';
 import DroneMessageBox from './DroneMessageBox';
 
-import { loadBot } from '../actions/bot';
+import { loadBot, processMessage } from '../actions/bot';
 
 class DroneBot extends Component {
 
@@ -19,7 +19,8 @@ class DroneBot extends Component {
     this._onMessageReceived = this._onMessageReceived.bind(this);
 
     this.state = {
-      customMessages: []
+      activeMessage: undefined,
+      botResponse: undefined
     };
   }
 
@@ -27,15 +28,26 @@ class DroneBot extends Component {
     this.props.dispatch(loadBot());
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { bot } = nextProps;
+
+    if (bot.response !== this.state.botResponse) {
+      this.setState({ botResponse: bot.response });
+    }
+  }
+
   _onMessageReceived(message) {
-    const customMessages = this.state.customMessages;
-    customMessages.push(message);
-    this.setState({ customMessages });
+    const { dispatch } = this.props;
+    this.setState({
+      activeMessage: message, botResponse: 'Ok, let me process this...'
+    }, () => (
+      dispatch(processMessage(message))
+    ));
   }
 
   render() {
     const { bot, session: { user } } = this.props;
-    const { customMessages } = this.state;
+    const { activeMessage, botResponse } = this.state;
 
     let messagesNode;
     if (bot) {
@@ -47,14 +59,31 @@ class DroneBot extends Component {
         'Choose a project or type "help" to get started.'
       ];
 
-      const customMessagesNode = customMessages.map((m, index) => (
-        <DroneMessage key={`custom-message-${index}`} message={m}
-          colorIndex='grey-4'
-          avatar={<Avatar src={user.avatar_url} name={user.login} />} />
-      ));
       messagesNode = messages.map((m, index) => (
         <DroneMessage key={`message-${index}`} message={m} />
-      )).concat(customMessagesNode);
+      ));
+
+      if (activeMessage) {
+        messagesNode.push(
+          <DroneMessage key='active-message' message={activeMessage}
+            colorIndex='grey-4'
+            avatar={<Avatar src={user.avatar_url} name={user.login} />} />
+        );
+      }
+
+      if (botResponse) {
+        if (Array.isArray(botResponse)) {
+          messagesNode = messagesNode.concat(
+            botResponse.map((response, index) => (
+              <DroneMessage key={`bot-response${index}`} message={response} />
+            ))
+          );
+        } else {
+          messagesNode.push(
+            <DroneMessage key='bot-response' message={botResponse} />
+          );
+        }
+      }
     }
 
     return (
@@ -76,6 +105,6 @@ DroneBot.propTypes = {
   session: PropTypes.object
 };
 
-const select = state => ({ bot: state.bot, session: state.session });
+const select = state => ({ ...state.bot, session: state.session });
 
 export default connect(select)(DroneBot);

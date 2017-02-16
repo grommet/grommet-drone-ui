@@ -4,7 +4,7 @@ exports[`test DroneMenuItem renders 1`] = `
   className="grommetux-anchor drone-anchor"
   href={undefined}
   onClick={undefined}
-  title={undefined}>
+  title="test">
   <div
     className="grommetux-box grommetux-box--direction-row grommetux-box--align-center grommetux-box--pad-vertical-medium grommetux-box--pad-horizontal-medium grommetux-box--pad-between-small drone-menu-item"
     id={undefined}
@@ -13,7 +13,9 @@ exports[`test DroneMenuItem renders 1`] = `
     style={Object {}}
     tabIndex={undefined}>
     <span
-      className="drone-menu-item__label" />
+      className="drone-menu-item__label">
+      test
+    </span>
     <svg
       className="drone-status-circle drone-status-circle--unknown"
       height="12"

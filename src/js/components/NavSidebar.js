@@ -113,7 +113,7 @@ NavSidebar.propTypes = {
 };
 
 const select = state => ({
-  ...state.user, bot: state.bot, session: state.session
+  ...state.user, ...state.bot, session: state.session
 });
 
 export default connect(select)(NavSidebar);

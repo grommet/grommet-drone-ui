@@ -9,7 +9,7 @@ jest.mock('react-dom');
 
 test('DroneMenuItem renders', () => {
   const component = renderer.create(
-    <DroneMenuItem />
+    <DroneMenuItem label='test' path='' />
   );
   const tree = component.toJSON();
   expect(tree).toMatchSnapshot();
