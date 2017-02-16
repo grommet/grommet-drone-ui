@@ -61,7 +61,7 @@ class Dashboard extends Component {
       );
     }
     return (
-      <Box>
+      <Box full='vertical'>
         {headerNode}
         <DroneBot />
         {navLayer}

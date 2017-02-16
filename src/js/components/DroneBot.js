@@ -87,7 +87,7 @@ class DroneBot extends Component {
     }
 
     return (
-      <Box colorIndex='grey-2' full='vertical'>
+      <Box colorIndex='grey-2' flex={true}>
         <Box flex={true} pad='medium'>
           {messagesNode}
         </Box>
