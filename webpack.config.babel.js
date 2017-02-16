@@ -62,7 +62,7 @@ export default Object.assign({
     publicPath: '/'
   },
   resolve: {
-    extensions: ['', '.js', '.scss', '.css']
+    extensions: ['', '.js', '.scss', '.css', '.json']
   },
   plugins,
   node: {
@@ -76,6 +76,10 @@ export default Object.assign({
         test: /\.js/,
         exclude: /node_modules/,
         loaders: ['babel']
+      },
+      {
+        test: /\.json/,
+        loaders: ['json']
       },
       {
         test: /\.scss$/,

@@ -23,6 +23,7 @@
     "react/jsx-first-prop-new-line": 0,
     "react/jsx-closing-bracket-location": 0,
     "react/no-multi-comp": 0,
+    "react/no-did-mount-set-state": 0,
     "react/prefer-stateless-function": 0,
     "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,

@@ -19,7 +19,20 @@ b.drone-strong,
   padding-bottom: 24px;
 }
 
-.drone-log-viewer span {
+.drone-token {
+  max-width: 250px;
+}
+
+code {
+  max-width: 900px;
+  white-space: pre-wrap;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  display: inline-block;
+}
+
+.drone-log-viewer span,
+.drone-token {
   word-wrap: break-word;
 }
 

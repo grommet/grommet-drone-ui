@@ -9,16 +9,26 @@ import Menu from 'grommet/components/Menu';
 import Avatar from './Avatar';
 
 class SessionMenu extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      showToken: false
+    };
+  }
 
   render() {
     const { session: { user } } = this.props;
+
     return (
       <Menu icon={<Avatar src={user.avatar_url} name={user.login} />}
         a11yTitle='Session' dropAlign={{ bottom: 'bottom' }}>
         <Box pad='medium'>
           <Label margin='none'>{user.login}</Label>
         </Box>
-        <Anchor path='/manage' label='Manage' />
+        <Anchor path='/manage' label='Manage Repos' />
+        <Anchor href='#' onClick={this.props.onShowToken}
+          label='Show Token' />
         <Anchor href='/logout' label='Logout' />
       </Menu>
     );
@@ -27,6 +37,7 @@ class SessionMenu extends Component {
 }
 
 SessionMenu.propTypes = {
+  onShowToken: PropTypes.func.isRequired,
   session: PropTypes.object.isRequired
 };
 

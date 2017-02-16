@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import Box from 'grommet/components/Box';
 import Button from 'grommet/components/Button';
 import Sidebar from 'grommet/components/Sidebar';
-import Header from 'grommet/components/Header';
 import Footer from 'grommet/components/Footer';
+import Header from 'grommet/components/Header';
 import Label from 'grommet/components/Label';
+import Layer from 'grommet/components/Layer';
 import Menu from 'grommet/components/Menu';
 import Notification from 'grommet/components/Notification';
+import Paragraph from 'grommet/components/Paragraph';
 import Spinning from 'grommet/components/icons/Spinning';
 
 import DroneMenuItem from './DroneMenuItem';
@@ -22,6 +24,14 @@ import { loadBot } from '../actions/bot';
 
 class NavSidebar extends Component {
 
+  constructor() {
+    super();
+
+    this.state = {
+      showLayer: false
+    };
+  }
+
   componentDidMount() {
     this.props.dispatch(loadUserRepos());
     this.props.dispatch(startUserReposStream());
@@ -29,7 +39,8 @@ class NavSidebar extends Component {
   }
 
   render() {
-    const { bot, error, loading, repos, session: { user } } = this.props;
+    const { bot, error, loading, repos, session: { user, token } } = this.props;
+    const { showLayer } = this.state;
 
     let errorNode;
     if (error) {
@@ -80,6 +91,19 @@ class NavSidebar extends Component {
       );
     }
 
+    let tokenLayer;
+    if (showLayer) {
+      tokenLayer = (
+        <Layer closer={true} onClose={() => this.setState({
+          showLayer: false
+        })}>
+          <Box pad='medium'>
+            <Label uppercase={true}>Your token</Label>
+            <Paragraph className='drone-token'>{token}</Paragraph>
+          </Box>
+        </Layer>
+      );
+    }
     return (
       <Sidebar colorIndex='grey-3'>
         <Header align='center' pad='medium'>
@@ -94,9 +118,15 @@ class NavSidebar extends Component {
         {errorNode}
         {contentNode}
         <Footer pad='small'>
-          <SessionMenu />
+          <SessionMenu onShowToken={(event) => {
+            event.preventDefault();
+            this.setState({
+              showLayer: true
+            });
+          }} />
           {user.login}
         </Footer>
+        {tokenLayer}
       </Sidebar>
     );
   }
