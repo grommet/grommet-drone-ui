@@ -1,5 +1,5 @@
 import {
-  REPO_ADD, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
+  REPO_ADD, REPO_FILTER, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
   REPO_LOAD_BUILD_LOGS, REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD, REPO_NEW_BUILD_LOG,
   REPO_NEW_BUILD_STATUS, REPO_REMOVE
 } from '../actions';
@@ -24,6 +24,21 @@ const handlers = {
       };
     }
     return { error: action.payload, success: undefined };
+  },
+  [REPO_FILTER]: (state, action) => {
+    let originalRepos = state.originalRepos;
+    if (action.payload !== '' && !state.originalRepos) {
+      originalRepos = [...state.allRepos];
+    } else if (action.payload === '') {
+      return { allRepos: state.originalRepos, originalRepos: undefined };
+    }
+
+    const allRepos = state.allRepos.filter(repo => (
+      repo.owner.toLowerCase().startsWith(action.payload.toLowerCase()) ||
+      repo.name.toLowerCase().startsWith(action.payload.toLowerCase())
+    ));
+
+    return { allRepos, originalRepos };
   },
   [REPO_CLEAR_MESSAGE]: () => ({ error: undefined, success: undefined }),
   [REPO_GET_ALL]: (state, action) => {

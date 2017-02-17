@@ -50,7 +50,7 @@ export default (cli) => {
         (builds) => {
           if (!builds || builds.length === 0) {
             return Promise.reject(
-              `Bad news, ${args.project} does not have any builds to restart.`
+              `Bad news, ${args.project} does not have any build to restart.`
             );
           }
           let buildMatch;

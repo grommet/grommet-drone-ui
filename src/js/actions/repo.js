@@ -1,5 +1,5 @@
 import {
-  REPO_ADD, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
+  REPO_ADD, REPO_FILTER, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
   REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD_LOG, REPO_REMOVE, USER_LOAD_REPOS
 } from '../actions';
 import { getUserRepos } from '../api/user';
@@ -30,6 +30,10 @@ export function addRepo(repo) {
         )
       );
   };
+}
+
+export function filterRepos(searchText) {
+  return dispatch => dispatch({ type: REPO_FILTER, payload: searchText });
 }
 
 export function getAllRepos() {
@@ -225,6 +229,6 @@ export function stopLogStream(build, job) {
 }
 
 export default {
-  addRepo, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog, removeRepo,
-  startLogStream, stopLogStream
+  addRepo, filterRepos, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog,
+  removeRepo, startLogStream, stopLogStream
 };

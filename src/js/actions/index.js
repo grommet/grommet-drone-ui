@@ -10,6 +10,7 @@ export const NAV_SHOW = 'NAV_SHOW';
 
 // Repo
 export const REPO_ADD = 'REPO_ADD';
+export const REPO_FILTER = 'REPO_FILTER';
 export const REPO_GET_ALL = 'REPO_GET_ALL';
 export const REPO_GET_BUILDS = 'REPO_GET_BUILDS';
 export const REPO_LOAD_BUILD_LOGS = 'REPO_LOAD_BUILD_LOGS';

@@ -5,20 +5,18 @@ import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 import CheckBox from 'grommet/components/CheckBox';
 import Header from 'grommet/components/Header';
-import Heading from 'grommet/components/Heading';
+import Label from 'grommet/components/Label';
 import List from 'grommet/components/List';
 import ListItem from 'grommet/components/ListItem';
-import Label from 'grommet/components/Label';
+import Search from 'grommet/components/Search';
 import Toast from 'grommet/components/Toast';
 import LinkPrevious from 'grommet/components/icons/base/LinkPrevious';
-import SettingsOption from 'grommet/components/icons/base/SettingsOption';
 import Spinning from 'grommet/components/icons/Spinning';
-
 
 import Loading from '../components/Loading';
 
 import {
-  addRepo, getAllRepos, removeRepo
+  addRepo, filterRepos, getAllRepos, removeRepo
 } from '../actions/repo';
 import { REPO_CLEAR_MESSAGE, NAV_HIDE, NAV_SHOW } from '../actions';
 import { pageLoaded } from './utils';
@@ -30,7 +28,8 @@ class RepoCheckBox extends Component {
     this._onChange = this._onChange.bind(this);
 
     this.state = {
-      checked: !!props.repo.id
+      checked: !!props.repo.id,
+      searchText: ''
     };
   }
 
@@ -69,6 +68,11 @@ class ManageRepos extends Component {
     super();
 
     this._onRepoChange = this._onRepoChange.bind(this);
+    this._onSearch = this._onSearch.bind(this);
+
+    this.state = {
+      searchText: ''
+    };
   }
 
   componentDidMount() {
@@ -93,8 +97,16 @@ class ManageRepos extends Component {
     }
   }
 
+  _onSearch(event) {
+    const { dispatch } = this.props;
+    this.setState({ searchText: event.target.value }, () => {
+      dispatch(filterRepos(event.target.value));
+    });
+  }
+
   render() {
     const { allRepos, dispatch, error, loading, success } = this.props;
+    const { searchText } = this.state;
 
     let toastNode;
     if (success || error) {
@@ -109,20 +121,23 @@ class ManageRepos extends Component {
     let reposNode;
     if (allRepos) {
       const itemsNode = allRepos.map((repo, index) => {
-        let settingsAchor;
+        let labelNode = (
+          <Label>{repo.full_name}</Label>
+        );
         if (repo.id) {
-          settingsAchor = (
-            <Anchor a11yTitle={`See ${repo.full_name} settings`}
-              path={`/${repo.owner}/${repo.name}/settings`}>
-              <SettingsOption />
-            </Anchor>
+          labelNode = (
+            <Label>
+              <Anchor a11yTitle={`See ${repo.full_name} settings`}
+                path={`/${repo.owner}/${repo.name}/settings`}>
+                {repo.full_name}
+              </Anchor>
+            </Label>
           );
         }
         return (
           <ListItem key={`menu-item-${index}`} justify='between'>
             <Box align='center' direction='row' responsive={false}>
-              <Label>{repo.full_name}</Label>
-              {settingsAchor}
+              {labelNode}
             </Box>
             <RepoCheckBox repo={repo} onChange={this._onRepoChange} />
           </ListItem>
@@ -143,13 +158,15 @@ class ManageRepos extends Component {
       <Box full={true} colorIndex='grey-2'>
         <Box flex={false}>
           {toastNode}
-          <Header align='start' direction='column'
+          <Header align='center' direction='row'
             pad={{
-              vertical: 'medium', horizontal: 'medium', between: 'medium'
+              vertical: 'medium', horizontal: 'small'
             }}>
             <Anchor a11yTitle='Return to Dashboard' path='/'
-              label='Back' icon={<LinkPrevious />} />
-            <Heading margin='none'>manage repos</Heading>
+              icon={<LinkPrevious />} />
+            <Label uppercase={true} margin='none'>repos</Label>
+            <Search inline={true} fill={true} size='medium' placeHolder='Search'
+              value={searchText} onDOMChange={this._onSearch} />
           </Header>
           {reposNode}
         </Box>
