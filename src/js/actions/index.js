@@ -1,6 +1,7 @@
 // See https://github.com/acdlite/flux-standard-action
 
 // Bot
+export const BOT_CLEAR_RESPONSE = 'BOT_CLEAR_RESPONSE';
 export const BOT_LOAD = 'BOT_LOAD';
 export const BOT_NEW_MESSAGE = 'BOT_NEW_MESSAGE';
 

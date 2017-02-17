@@ -57,7 +57,7 @@ export default class LogViewer extends Component {
     if (autoScroll) {
       this.setState({ autoScroll: false });
 
-      this._autoScrollTimeout = setTimeout(this._onEnableAutoScroll, 5000);
+      this._autoScrollTimeout = setTimeout(this._onEnableAutoScroll, 10000);
     }
   }
 

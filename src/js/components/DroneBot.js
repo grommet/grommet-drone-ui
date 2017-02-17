@@ -9,6 +9,7 @@ import Avatar from './Avatar';
 import DroneMessage from './DroneMessage';
 import DroneMessageBox from './DroneMessageBox';
 
+import { BOT_CLEAR_RESPONSE } from '../actions';
 import { loadBot, processMessage } from '../actions/bot';
 
 class DroneBot extends Component {
@@ -34,6 +35,11 @@ class DroneBot extends Component {
     if (bot.response !== this.state.botResponse) {
       this.setState({ botResponse: bot.response });
     }
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({ type: BOT_CLEAR_RESPONSE });
   }
 
   _onMessageReceived(message) {

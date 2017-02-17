@@ -27,6 +27,7 @@ import StatusIcon from '../components/StatusIcon';
 import NotFound from './NotFound';
 import { pageLoaded } from './utils';
 
+import { BOT_CLEAR_RESPONSE } from '../actions';
 import { loadBuilds } from '../actions/repo';
 import { loadBot, processInContextMessage } from '../actions/bot';
 
@@ -62,13 +63,15 @@ class RepoView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { bot, dispatch, params: { owner, name } } = nextProps;
+    const {
+      bot, dispatch, params: { owner, name }
+    } = nextProps;
     const fullName = `${owner}/${name}`;
     const previousOwner = this.props.params.owner;
     const previousName = this.props.params.name;
     const previousFullName = `${previousOwner}/${previousName}`;
 
-    let botResponse;
+    let botResponse = this.state.botResponse;
     if (bot && bot.response !== this.state.botResponse) {
       botResponse = bot.response;
     }
@@ -77,6 +80,7 @@ class RepoView extends Component {
     if (fullName !== previousFullName) {
       activeMessage = undefined; // clear messages if you are in another repo
       botResponse = undefined; // clear messages if you are in another repo
+      dispatch({ type: BOT_CLEAR_RESPONSE });
       dispatch(loadBuilds(fullName));
     }
 
