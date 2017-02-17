@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 import stripAnsi from 'strip-ansi';
 
 import Box from 'grommet/components/Box';
@@ -7,6 +8,65 @@ import Label from 'grommet/components/Label';
 const CLASS_ROOT = 'drone-log-viewer';
 
 export default class LogViewer extends Component {
+  constructor() {
+    super();
+
+    this._scrollToBottom = this._scrollToBottom.bind(this);
+    this._onDisableAutoScroll = this._onDisableAutoScroll.bind(this);
+    this._onEnableAutoScroll = this._onEnableAutoScroll.bind(this);
+
+    this.state = {
+      autoScroll: true
+    };
+  }
+
+  componentDidMount() {
+    this._scrollToBottom();
+    if (this._logRef) {
+      const logBoxNode = findDOMNode(this._logRef);
+      logBoxNode.parentNode.addEventListener(
+        'scroll', this._onDisableAutoScroll
+      );
+    }
+  }
+
+  componentWillReceiveProps() {
+    this._scrollToBottom();
+  }
+
+  componentWillUnmount() {
+    if (this._logRef) {
+      const logBoxNode = findDOMNode(this._logRef);
+      logBoxNode.parentNode.removeEventListener(
+        'scroll', this._onDisableAutoScroll
+      );
+    }
+    clearTimeout(this._autoScrollTimeout);
+  }
+
+  _scrollToBottom() {
+    const { autoScroll } = this.state;
+    if (autoScroll && this._logRef) {
+      const logBoxNode = findDOMNode(this._logRef);
+      logBoxNode.parentNode.scrollTop = logBoxNode.scrollHeight;
+    }
+  }
+
+  _onDisableAutoScroll() {
+    const { autoScroll } = this.state;
+    if (autoScroll) {
+      this.setState({ autoScroll: false });
+
+      this._autoScrollTimeout = setTimeout(this._onEnableAutoScroll, 5000);
+    }
+  }
+
+  _onEnableAutoScroll() {
+    const { autoScroll } = this.state;
+    if (!autoScroll) {
+      this.setState({ autoScroll: true });
+    }
+  }
 
   render() {
     const { log } = this.props;
@@ -56,7 +116,8 @@ export default class LogViewer extends Component {
     });
 
     return (
-      <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
+      <Box ref={ref => this._logRef = ref}
+        pad={{ horizontal: 'medium', vertical: 'small' }}>
         {codeNodes}
       </Box>
     );
