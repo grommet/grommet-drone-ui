@@ -44,14 +44,14 @@ if (env === 'production') {
     require.resolve('react-dev-utils/webpackHotDevClient'),
     './src/js/index.js'
   ];
-  devConfig.resolve = {
-    alias: {
-      'grommet-addons':
-        path.resolve(__dirname, '../grommet-addons/src/js'),
-      'grommet/scss': path.resolve(__dirname, '../grommet/src/scss'),
-      grommet: path.resolve(__dirname, '../grommet/src/js')
-    }
-  };
+  // devConfig.resolve = {
+  //   alias: {
+  //     'grommet-addons':
+  //       path.resolve(__dirname, '../grommet-addons/src/js'),
+  //     'grommet/scss': path.resolve(__dirname, '../grommet/src/scss'),
+  //     grommet: path.resolve(__dirname, '../grommet/src/js')
+  //   }
+  // };
 }
 
 export default Object.assign({
