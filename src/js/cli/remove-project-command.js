@@ -34,10 +34,15 @@ export default (cli) => {
           });
 
           if (repoMatch) {
-            dispatch(removeRepo(repoMatch));
-            return Promise.resolve(
-              `Perfect, I've successfully triggered your request to remove ${repoMatch.full_name}.`
-            );
+            if (repoMatch.id) {
+              dispatch(removeRepo(repoMatch));
+              return Promise.resolve(
+                `Perfect, I've successfully triggered your request to remove ${repoMatch.full_name}.`
+              );
+            }
+            return Promise.reject(`
+              ${args.project} is already removed, nothing to be done here.
+            `);
           }
 
           return Promise.reject(`

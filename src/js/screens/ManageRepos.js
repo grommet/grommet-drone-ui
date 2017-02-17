@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
-import CheckBox from 'grommet/components/CheckBox';
+import Button from 'grommet/components/Button';
 import Header from 'grommet/components/Header';
 import Label from 'grommet/components/Label';
 import List from 'grommet/components/List';
@@ -11,56 +11,16 @@ import ListItem from 'grommet/components/ListItem';
 import Search from 'grommet/components/Search';
 import Toast from 'grommet/components/Toast';
 import LinkPrevious from 'grommet/components/icons/base/LinkPrevious';
-import Spinning from 'grommet/components/icons/Spinning';
+import Sync from 'grommet/components/icons/base/Sync';
 
+import ElementCheckBox from '../components/ElementCheckBox';
 import Loading from '../components/Loading';
 
 import {
-  addRepo, filterRepos, getAllRepos, removeRepo
+  addRepo, filterRepos, getAllRepos, removeRepo, syncRepos
 } from '../actions/repo';
 import { REPO_CLEAR_MESSAGE, NAV_HIDE, NAV_SHOW } from '../actions';
 import { pageLoaded } from './utils';
-
-class RepoCheckBox extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this._onChange = this._onChange.bind(this);
-
-    this.state = {
-      checked: !!props.repo.id,
-      searchText: ''
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ checked: !!nextProps.repo.id, changed: false });
-  }
-
-  _onChange() {
-    const { onChange, repo } = this.props;
-    const { checked } = this.state;
-    onChange(repo);
-    this.setState({ checked: !checked, changed: true });
-  }
-
-  render() {
-    const { checked, changed } = this.state;
-
-    if (changed) {
-      return <Box pad={{ horizontal: 'medium' }}><Spinning /></Box>;
-    }
-    return (
-      <CheckBox toggle={true} checked={checked}
-        onChange={this._onChange} />
-    );
-  }
-}
-
-RepoCheckBox.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  repo: PropTypes.object.isRequired
-};
 
 class ManageRepos extends Component {
 
@@ -69,6 +29,7 @@ class ManageRepos extends Component {
 
     this._onRepoChange = this._onRepoChange.bind(this);
     this._onSearch = this._onSearch.bind(this);
+    this._onSyncRepos = this._onSyncRepos.bind(this);
 
     this.state = {
       searchText: ''
@@ -104,6 +65,11 @@ class ManageRepos extends Component {
     });
   }
 
+  _onSyncRepos() {
+    const { dispatch } = this.props;
+    dispatch(syncRepos());
+  }
+
   render() {
     const { allRepos, dispatch, error, loading, success } = this.props;
     const { searchText } = this.state;
@@ -136,10 +102,9 @@ class ManageRepos extends Component {
         }
         return (
           <ListItem key={`menu-item-${index}`} justify='between'>
-            <Box align='center' direction='row' responsive={false}>
-              {labelNode}
-            </Box>
-            <RepoCheckBox repo={repo} onChange={this._onRepoChange} />
+            {labelNode}
+            <ElementCheckBox async={true} element={repo}
+              onChange={this._onRepoChange} checked={!!repo.id} />
           </ListItem>
         );
       });
@@ -158,15 +123,22 @@ class ManageRepos extends Component {
       <Box full={true} colorIndex='grey-2'>
         <Box flex={false}>
           {toastNode}
-          <Header align='center' direction='row'
+          <Header align='center' justify='between' direction='row'
             pad={{
               vertical: 'medium', horizontal: 'small'
             }}>
-            <Anchor a11yTitle='Return to Dashboard' path='/'
-              icon={<LinkPrevious />} />
-            <Label uppercase={true} margin='none'>repos</Label>
-            <Search inline={true} fill={true} size='medium' placeHolder='Search'
-              value={searchText} onDOMChange={this._onSearch} />
+            <Box direction='row' responsive={false} align='center'>
+              <Anchor a11yTitle='Return to Dashboard' path='/'
+                icon={<LinkPrevious />} />
+              <Label uppercase={true} margin='none'>repos</Label>
+            </Box>
+            <Box direction='row' responsive={false} align='center'
+              justify='end' flex={true}>
+              <Search inline={true} fill={true} size='medium' placeHolder='Search'
+                value={searchText} onDOMChange={this._onSearch} />
+              <Button a11yTitle='Sync repos' icon={<Sync />}
+                onClick={this._onSyncRepos} />
+            </Box>
           </Header>
           {reposNode}
         </Box>

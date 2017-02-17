@@ -1,7 +1,7 @@
 import {
   REPO_ADD, REPO_FILTER, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
   REPO_LOAD_BUILD_LOGS, REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD, REPO_NEW_BUILD_LOG,
-  REPO_NEW_BUILD_STATUS, REPO_REMOVE
+  REPO_NEW_BUILD_STATUS, REPO_REMOVE, REPO_SYNC, REPO_UPDATE
 } from '../actions';
 import { createReducer } from './utils';
 
@@ -179,6 +179,26 @@ const handlers = {
       };
     }
     return { error: action.payload, success: undefined };
+  },
+  [REPO_SYNC]: (state, action) => {
+    if (action.success) {
+      return { success: 'Successfully synced repos.' };
+    }
+    return undefined;
+  },
+  [REPO_UPDATE]: (state, action) => {
+    if (action.success) {
+      return {
+        success: `Successfully updated ${action.repoName}.`,
+        error: undefined,
+        loading: undefined
+      };
+    } else if (action.loading) {
+      return {
+        error: action.undefined, loading: true, success: undefined
+      };
+    }
+    return { error: action.payload, loading: undefined, success: undefined };
   }
 };
 

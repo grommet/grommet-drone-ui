@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
@@ -11,6 +12,8 @@ import { pageLoaded } from './utils';
 import DroneBot from '../components/DroneBot';
 import Logo from '../components/Logo';
 import NavSidebar from '../components/NavSidebar';
+
+import { REPO_CLEAR_MESSAGE } from '../actions';
 
 class Dashboard extends Component {
 
@@ -31,7 +34,9 @@ class Dashboard extends Component {
   }
 
   componentWillUnmount() {
+    const { dispatch } = this.props;
     this._responsive.stop();
+    dispatch({ type: REPO_CLEAR_MESSAGE });
   }
 
   _onResponsive(small) {
@@ -70,4 +75,8 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+Dashboard.propTypes = {
+  dispatch: PropTypes.func.isRequired
+};
+
+export default connect()(Dashboard);

@@ -102,4 +102,37 @@ export function restart(repoName, number) {
     .then(processResponse);
 }
 
-export default { add, getAll, getBuilds, getBuild, getLog, remove };
+export function sync() {
+  const options = {
+    headers: headers(),
+    method: 'GET',
+    credentials: 'include'
+  };
+
+  return fetch('/api/user/repos?all=true&flush=true', options).then(parseJSON);
+}
+
+export function update(repoName, data) {
+  // there is a bug where the input parameter names differ from
+  // the output parameter names. This attempts to resolve.
+  if (data.allow_deploys) {
+    data.allow_deploy = data.allow_deploys;
+  }
+  if (data.allow_tags) {
+    data.allow_tag = data.allow_tags;
+  }
+
+  const options = {
+    headers: headers(),
+    method: 'PATCH',
+    credentials: 'include',
+    body: JSON.stringify(data)
+  };
+
+  return fetch(`/api/repos/${repoName}`, options)
+    .then(processResponse);
+}
+
+export default {
+  add, getAll, getBuilds, getBuild, getLog, remove, sync, update
+};

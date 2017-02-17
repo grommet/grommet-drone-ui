@@ -1,10 +1,11 @@
 import {
   REPO_ADD, REPO_FILTER, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
-  REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD_LOG, REPO_REMOVE, USER_LOAD_REPOS
+  REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD_LOG, REPO_REMOVE, REPO_UPDATE,
+  USER_LOAD_REPOS, REPO_SYNC
 } from '../actions';
 import { getUserRepos } from '../api/user';
 import {
-  add, getAll, getBuild, getBuilds, getLog, getRepo, remove
+  add, getAll, getBuild, getBuilds, getLog, getRepo, remove, sync, update
 } from '../api/repo';
 
 import { watcher } from './utils';
@@ -228,7 +229,35 @@ export function stopLogStream(build, job) {
   }
 }
 
+export function syncRepos() {
+  return (dispatch) => {
+    sync()
+      .then(
+        (payload) => {
+          dispatch({ type: REPO_SYNC, success: true });
+          dispatch({ type: REPO_GET_ALL, payload });
+        },
+        payload => dispatch({ type: REPO_GET_ALL, error: true, payload })
+      );
+  };
+}
+
+export function updateRepo(repoName, data) {
+  return (dispatch) => {
+    dispatch({ type: REPO_UPDATE, loading: true });
+    update(repoName, data)
+      .then(
+        () => dispatch({
+          type: REPO_UPDATE, success: true, repoName
+        }),
+        payload => dispatch({
+          type: REPO_UPDATE, error: true, payload: payload.statusText
+        })
+      );
+  };
+}
+
 export default {
   addRepo, filterRepos, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog,
-  removeRepo, startLogStream, stopLogStream
+  removeRepo, startLogStream, stopLogStream, syncRepos, updateRepo
 };
