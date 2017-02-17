@@ -1,6 +1,6 @@
 # grommet-drone-ui
 
-This is a Work in Progress UI for [Drone](https://github.com/drone/drone) based on [Grommet](https://grommet.github.io).
+This is an UI for [Drone](https://github.com/drone/drone) based on [Grommet](https://grommet.github.io).
 
 To run this application, execute the following commands:
 
@@ -31,3 +31,5 @@ To run this application, execute the following commands:
     ```
     $ npm test
     ```
+    
+The embed Drone Server with this UI is available as a docker image: https://hub.docker.com/r/grommet/drone/
