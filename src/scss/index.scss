@@ -26,9 +26,12 @@ b.drone-strong,
 code {
   max-width: 900px;
   white-space: pre-wrap;
+  display: inline-block;
+}
+
+code.drone-repo-badge {
   padding-top: 24px;
   padding-bottom: 24px;
-  display: inline-block;
 }
 
 .drone-log-viewer span,

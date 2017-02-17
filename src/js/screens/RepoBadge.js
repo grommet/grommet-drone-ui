@@ -83,7 +83,7 @@ class RepoBadge extends Component {
             p: { props: { margin: 'none' } }
           }} content={`[![](${baseURL}/status.svg)](${baseURL})`} />
           <pre>
-            <code>
+            <code className='drone-repo-badge'>
               {`[![Build Status](${baseURL}/status.svg)](${baseURL})`}
             </code>
           </pre>
@@ -95,7 +95,7 @@ class RepoBadge extends Component {
               src={`${baseURL}/status.svg`} />
           </Anchor>
           <pre>
-            <code>
+            <code className='drone-repo-badge'>
               {`<a href="${baseURL}"><img src="${baseURL}/status.svg"/></a>`}
             </code>
           </pre>
