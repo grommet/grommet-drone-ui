@@ -5,6 +5,7 @@ import WatchMissingNodeModulesPlugin from
   'react-dev-utils/WatchMissingNodeModulesPlugin';
 
 const env = process.env.NODE_ENV || 'production';
+const useAlias = process.env.USE_ALIAS;
 
 let plugins = [
   new CopyWebpackPlugin([{ from: './public' }]),
@@ -44,14 +45,18 @@ if (env === 'production') {
     require.resolve('react-dev-utils/webpackHotDevClient'),
     './src/js/index.js'
   ];
-  // devConfig.resolve = {
-  //   alias: {
-  //     'grommet-addons':
-  //       path.resolve(__dirname, '../grommet-addons/src/js'),
-  //     'grommet/scss': path.resolve(__dirname, '../grommet/src/scss'),
-  //     grommet: path.resolve(__dirname, '../grommet/src/js')
-  //   }
-  // };
+  if (useAlias) {
+    console.log('Using webpack alias for development');
+    devConfig.resolve = {
+      alias: {
+        'grommet-addons': path.resolve(
+          __dirname, '../grommet-addons/src/js'
+        ),
+        'grommet/scss': path.resolve(__dirname, '../grommet/src/scss'),
+        grommet: path.resolve(__dirname, '../grommet/src/js')
+      }
+    };
+  }
 }
 
 export default Object.assign({
