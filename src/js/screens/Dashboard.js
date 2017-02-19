@@ -13,7 +13,7 @@ import DroneBot from '../components/DroneBot';
 import Logo from '../components/Logo';
 import NavSidebar from '../components/NavSidebar';
 
-import { REPO_CLEAR_MESSAGE } from '../actions';
+import { REPO_CLEAR_MESSAGE, NAV_SHOW, NAV_HIDE } from '../actions';
 
 class Dashboard extends Component {
 
@@ -29,14 +29,17 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
     pageLoaded('Dashboard');
     this._responsive = Responsive.start(this._onResponsive);
+    dispatch({ type: NAV_SHOW });
   }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
     this._responsive.stop();
     dispatch({ type: REPO_CLEAR_MESSAGE });
+    dispatch({ type: NAV_HIDE });
   }
 
   _onResponsive(small) {

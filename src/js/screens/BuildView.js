@@ -19,7 +19,6 @@ import StatusIcon from '../components/StatusIcon';
 import NotFound from './NotFound';
 import { getJobKey, pageLoaded } from './utils';
 
-import { NAV_HIDE, NAV_SHOW } from '../actions';
 import { startUserReposStream } from '../actions/user';
 import { loadBuildLogs, startLogStream, stopLogStream } from '../actions/repo';
 
@@ -39,8 +38,6 @@ class BuildView extends Component {
     const fullName = `${owner}/${name}`;
 
     dispatch(loadBuildLogs(fullName, number));
-
-    dispatch({ type: NAV_HIDE });
 
     pageLoaded(`${name} Build ${number} View`);
 
@@ -64,12 +61,11 @@ class BuildView extends Component {
   }
 
   componentWillUnmount() {
-    const { build, dispatch } = this.props;
+    const { build } = this.props;
     this._responsive.stop();
     if (build && build.jobs.length === 1) {
       stopLogStream(build, build.jobs[0]);
     }
-    dispatch({ type: NAV_SHOW });
   }
 
   _onResponsive(small) {

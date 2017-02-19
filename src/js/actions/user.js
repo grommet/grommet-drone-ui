@@ -13,7 +13,9 @@ export function loadUserRepos() {
     getUserRepos()
       .then(
         payload => dispatch({ type: USER_LOAD_REPOS, payload }),
-        payload => dispatch({ type: USER_LOAD_REPOS, error: true, payload })
+        payload => dispatch({
+          type: USER_LOAD_REPOS, error: true, payload: payload.statusText
+        })
       );
   };
 }

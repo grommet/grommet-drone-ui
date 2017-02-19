@@ -27,7 +27,7 @@ import StatusIcon from '../components/StatusIcon';
 import NotFound from './NotFound';
 import { pageLoaded } from './utils';
 
-import { BOT_CLEAR_RESPONSE } from '../actions';
+import { BOT_CLEAR_RESPONSE, NAV_SHOW, NAV_HIDE } from '../actions';
 import { loadBuilds } from '../actions/repo';
 import { loadBot, processInContextMessage } from '../actions/bot';
 
@@ -54,6 +54,7 @@ class RepoView extends Component {
 
     dispatch(loadBot());
     dispatch(loadBuilds(fullName));
+    dispatch({ type: NAV_SHOW });
 
     pageLoaded(`${fullName} View`);
 
@@ -91,7 +92,9 @@ class RepoView extends Component {
   }
 
   componentWillUnmount() {
+    const { dispatch } = this.props;
     this._responsive.stop();
+    dispatch({ type: NAV_HIDE });
   }
 
   _scrollToBottom() {

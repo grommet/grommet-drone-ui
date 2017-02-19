@@ -20,7 +20,6 @@ import NotFound from './NotFound';
 import { pageLoaded } from './utils';
 
 import { loadBuilds } from '../actions/repo';
-import { NAV_HIDE, NAV_SHOW } from '../actions';
 
 class RepoBadge extends Component {
   constructor() {
@@ -38,7 +37,6 @@ class RepoBadge extends Component {
     const { dispatch, params: { owner, name } } = this.props;
     const fullName = `${owner}/${name}`;
 
-    dispatch({ type: NAV_HIDE });
     dispatch(loadBuilds(fullName));
 
     pageLoaded(`${fullName} Badges View`);
@@ -49,9 +47,7 @@ class RepoBadge extends Component {
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props;
     this._responsive.stop();
-    dispatch({ type: NAV_SHOW });
   }
 
   _onResponsive(small) {

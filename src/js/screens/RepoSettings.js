@@ -26,7 +26,7 @@ import DroneStatusCircle from '../components/DroneStatusCircle';
 import { pageLoaded } from './utils';
 
 import { loadBuilds, updateRepo } from '../actions/repo';
-import { NAV_HIDE, NAV_SHOW, REPO_CLEAR_MESSAGE } from '../actions';
+import { REPO_CLEAR_MESSAGE } from '../actions';
 
 class RepoSettings extends Component {
   constructor() {
@@ -46,7 +46,6 @@ class RepoSettings extends Component {
     const { dispatch, params: { owner, name } } = this.props;
     const fullName = `${owner}/${name}`;
 
-    dispatch({ type: NAV_HIDE });
     dispatch(loadBuilds(fullName));
 
     pageLoaded(`${fullName} Badges View`);
@@ -69,9 +68,7 @@ class RepoSettings extends Component {
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props;
     this._responsive.stop();
-    dispatch({ type: NAV_SHOW });
   }
 
   _onResponsive(small) {

@@ -1,7 +1,7 @@
 import {
   REPO_ADD, REPO_FILTER, REPO_GET_ALL, REPO_GET_BUILDS, REPO_LOAD_BUILD_LOGS,
   REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD_LOG, REPO_REMOVE, REPO_UPDATE,
-  USER_LOAD_REPOS, REPO_SYNC
+  USER_LOAD_REPOS, REPO_SEARCH, REPO_SYNC
 } from '../actions';
 import { getUserRepos } from '../api/user';
 import {
@@ -22,7 +22,7 @@ export function addRepo(repo) {
             .then(
               p => dispatch({ type: USER_LOAD_REPOS, payload: p }),
               p => dispatch({
-                type: USER_LOAD_REPOS, error: true, payload: p
+                type: USER_LOAD_REPOS, error: true, payload: p.statusText
               })
             );
         },
@@ -33,8 +33,8 @@ export function addRepo(repo) {
   };
 }
 
-export function filterRepos(searchText) {
-  return dispatch => dispatch({ type: REPO_FILTER, payload: searchText });
+export function filterRepos(filter) {
+  return dispatch => dispatch({ type: REPO_FILTER, payload: filter });
 }
 
 export function getAllRepos() {
@@ -43,7 +43,9 @@ export function getAllRepos() {
     getAll()
       .then(
         payload => dispatch({ type: REPO_GET_ALL, payload }),
-        payload => dispatch({ type: REPO_GET_ALL, error: true, payload })
+        payload => dispatch({
+          type: REPO_GET_ALL, error: true, payload: payload.statusText
+        })
       );
   };
 }
@@ -191,7 +193,7 @@ export function removeRepo(repo) {
             .then(
               payload => dispatch({ type: USER_LOAD_REPOS, payload }),
               payload => dispatch({
-                type: USER_LOAD_REPOS, error: true, payload
+                type: USER_LOAD_REPOS, error: true, payload: payload.statusText
               })
             );
         },
@@ -200,6 +202,10 @@ export function removeRepo(repo) {
         )
       );
   };
+}
+
+export function searchRepos(searchText) {
+  return dispatch => dispatch({ type: REPO_SEARCH, payload: searchText });
 }
 
 export function startLogStream(repoName, build, job) {
@@ -237,7 +243,9 @@ export function syncRepos() {
           dispatch({ type: REPO_SYNC, success: true });
           dispatch({ type: REPO_GET_ALL, payload });
         },
-        payload => dispatch({ type: REPO_GET_ALL, error: true, payload })
+        payload => dispatch({
+          type: REPO_GET_ALL, error: true, payload: payload.statusText
+        })
       );
   };
 }
@@ -259,5 +267,5 @@ export function updateRepo(repoName, data) {
 
 export default {
   addRepo, filterRepos, getAllRepos, loadBuilds, loadBuildLogs, loadBuildLog,
-  removeRepo, startLogStream, stopLogStream, syncRepos, updateRepo
+  removeRepo, searchRepos, startLogStream, stopLogStream, syncRepos, updateRepo
 };

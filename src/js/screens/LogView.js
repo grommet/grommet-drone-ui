@@ -15,7 +15,6 @@ import LogViewer from '../components/LogViewer';
 import NotFound from './NotFound';
 import { getJobKey, pageLoaded } from './utils';
 
-import { NAV_HIDE, NAV_SHOW } from '../actions';
 import { startUserReposStream } from '../actions/user';
 import { loadBuildLog, startLogStream, stopLogStream } from '../actions/repo';
 
@@ -35,7 +34,6 @@ class LogView extends Component {
     const fullName = `${owner}/${name}`;
 
     dispatch(loadBuildLog(fullName, number, log));
-    dispatch({ type: NAV_HIDE });
 
     pageLoaded(`${name} Log ${log} View`);
 
@@ -66,9 +64,8 @@ class LogView extends Component {
   }
 
   componentWillUnmount() {
-    const { build, dispatch } = this.props;
+    const { build } = this.props;
     this._responsive.stop();
-    dispatch({ type: NAV_SHOW });
 
     if (build && this._runningJob) {
       stopLogStream(build, this._runningJob);

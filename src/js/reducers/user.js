@@ -9,6 +9,7 @@ const handlers = {
   [USER_LOAD_REPOS]: (state, action) => {
     if (!action.error && !action.loading) {
       return {
+        error: undefined,
         loading: false,
         repos: action.payload.sort(
           (a, b) => (b.started_at || b.created_at || -1) -
@@ -18,7 +19,8 @@ const handlers = {
     }
     if (action.loading) {
       return {
-        loading: true
+        loading: true,
+        error: undefined
       };
     }
     return { error: action.payload, loading: false };

@@ -1,7 +1,7 @@
 import {
   REPO_ADD, REPO_FILTER, REPO_CLEAR_MESSAGE, REPO_GET_ALL, REPO_GET_BUILDS,
   REPO_LOAD_BUILD_LOGS, REPO_LOAD_BUILD_LOG, REPO_NEW_BUILD, REPO_NEW_BUILD_LOG,
-  REPO_NEW_BUILD_STATUS, REPO_REMOVE, REPO_SYNC, REPO_UPDATE
+  REPO_NEW_BUILD_STATUS, REPO_REMOVE, REPO_SEARCH, REPO_SYNC, REPO_UPDATE
 } from '../actions';
 import { createReducer } from './utils';
 
@@ -19,40 +19,85 @@ const handlers = {
         return repo;
       });
       return {
+        error: undefined,
         success: `Successfully added ${action.payload.full_name}`,
         allRepos
       };
     }
     return { error: action.payload, success: undefined };
   },
+  [REPO_CLEAR_MESSAGE]: () => ({ error: undefined, success: undefined }),
   [REPO_FILTER]: (state, action) => {
     let originalRepos = state.originalRepos;
-    if (action.payload !== '' && !state.originalRepos) {
+    if (!state.originalRepos) {
       originalRepos = [...state.allRepos];
-    } else if (action.payload === '') {
-      return { allRepos: state.originalRepos, originalRepos: undefined };
     }
 
-    const allRepos = state.allRepos.filter(repo => (
-      repo.owner.toLowerCase().startsWith(action.payload.toLowerCase()) ||
-      repo.name.toLowerCase().startsWith(action.payload.toLowerCase())
-    ));
+    let filteredRepos = [...originalRepos];
 
-    return { allRepos, originalRepos };
+    // apply search first
+    if (state.searchText && state.searchText !== '') {
+      filteredRepos = filteredRepos.filter(repo => (
+        repo.owner.toLowerCase().startsWith(state.searchText.toLowerCase()) ||
+        repo.name.toLowerCase().startsWith(state.searchText.toLowerCase())
+      ));
+    }
+
+    const currentFilter = {
+      status: action.payload.status || state.filter.status,
+      owner: action.payload.owner || state.filter.owner
+    };
+
+    if (currentFilter.status === 'active') {
+      filteredRepos = filteredRepos.filter(repo => repo.id);
+    } else if (currentFilter.status === 'inactive') {
+      filteredRepos = filteredRepos.filter(repo => !repo.id);
+    }
+
+    if (currentFilter.owner !== 'all') {
+      filteredRepos = filteredRepos.filter(
+        repo => currentFilter.owner.indexOf(repo.owner) >= 0
+      );
+    }
+
+    return {
+      allRepos: filteredRepos,
+      originalRepos,
+      filter: Object.assign(state.filter, currentFilter, {
+        filteredTotal: originalRepos.length !== filteredRepos.length ?
+          filteredRepos.length : 0,
+        unfilteredTotal: originalRepos.length
+      })
+    };
   },
-  [REPO_CLEAR_MESSAGE]: () => ({ error: undefined, success: undefined }),
   [REPO_GET_ALL]: (state, action) => {
     if (!action.error && !action.loading) {
+      const allRepos = action.payload.sort(
+        (a, b) => {
+          if (a.full_name < b.full_name) return -1;
+          if (a.full_name > b.full_name) return 1;
+          return 0;
+        }
+      );
+
+      const owners = [];
+      allRepos.forEach((repo) => {
+        if (owners.indexOf(repo.owner) < 0) {
+          owners.push(repo.owner);
+        }
+      });
+
       return {
         loading: false,
         error: undefined,
-        allRepos: action.payload.sort(
-          (a, b) => {
-            if (a.full_name < b.full_name) return -1;
-            if (a.full_name > b.full_name) return 1;
-            return 0;
-          }
-        )
+        allRepos,
+        filter: {
+          status: 'all',
+          owner: 'all',
+          owners,
+          filteredTotal: 0,
+          unfilteredTotal: action.payload.length
+        }
       };
     }
     if (action.loading) {
@@ -82,7 +127,7 @@ const handlers = {
       if (build.jobs.length === 1 && build.logs) {
         build.log = build.logs['1'].log;
       }
-      return { loading: false, build };
+      return { loading: false, build, error: undefined };
     }
     if (action.loading) {
       return {
@@ -179,6 +224,21 @@ const handlers = {
       };
     }
     return { error: action.payload, success: undefined };
+  },
+  [REPO_SEARCH]: (state, action) => {
+    let originalRepos = state.originalRepos;
+    if (action.payload !== '' && !state.originalRepos) {
+      originalRepos = [...state.allRepos];
+    } else if (action.payload === '') {
+      return { allRepos: state.originalRepos, originalRepos: undefined };
+    }
+
+    const allRepos = state.allRepos.filter(repo => (
+      repo.owner.toLowerCase().startsWith(action.payload.toLowerCase()) ||
+      repo.name.toLowerCase().startsWith(action.payload.toLowerCase())
+    ));
+
+    return { allRepos, originalRepos, searchText: action.payload };
   },
   [REPO_SYNC]: (state, action) => {
     if (action.success) {

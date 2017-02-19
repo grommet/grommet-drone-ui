@@ -35,7 +35,7 @@ export default class RepoCheckBox extends Component {
       return <Box pad={{ horizontal: 'medium' }}><Spinning /></Box>;
     }
     return (
-      <CheckBox toggle={true} defaultChecked={checked} label={label}
+      <CheckBox toggle={true} checked={checked} label={label}
         onChange={this._onChange} />
     );
   }

@@ -45,8 +45,10 @@ class NavSidebar extends Component {
     let errorNode;
     if (error) {
       errorNode = (
-        <Notification status='critical' message='Could not load repos'
-          state={error} />
+        <Box flex={true}>
+          <Notification status='critical' message='Could not load repos'
+            state={error} />
+        </Box>
       );
     }
 

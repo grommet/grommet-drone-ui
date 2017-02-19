@@ -16,9 +16,9 @@ class Main extends Component {
     if (!user) {
       mainNode = <Login />;
     } else {
-      let sidebar = <NavSidebar />;
-      if (nav && nav.hide) {
-        sidebar = undefined;
+      let sidebar;
+      if (nav && nav.show) {
+        sidebar = <NavSidebar />;
       }
       mainNode = (
         <Split flex='right' priority='right' fixed={true}>
