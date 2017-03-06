@@ -1,8 +1,9 @@
-import webpackConfig from './webpack.config.babel.js';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import httpProxy from 'http-proxy';
 import opener from 'opener';
+
+import webpackConfig from './webpack.config.babel.js';
 
 const httpServer = `http://${process.env.HOST}`;
 const wsServer = `ws://${process.env.HOST}`;

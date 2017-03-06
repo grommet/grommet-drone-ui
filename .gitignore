@@ -1,7 +1,5 @@
 /dist/index.html
-/dist/index.js
-/dist/index.css
-/dist/img/
+/dist/static/**
 /node_modules/
 .DS_Store
 .docker

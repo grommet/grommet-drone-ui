@@ -63,7 +63,7 @@ export default Object.assign({
   entry: './src/js/index.js',
   output: {
     path: path.resolve('./dist'),
-    filename: 'index.js',
+    filename: 'static/index.js',
     publicPath: '/'
   },
   resolve: {
@@ -88,7 +88,7 @@ export default Object.assign({
       },
       {
         test: /\.scss$/,
-        loader: 'file?name=[name].css!sass?outputStyle=compressed'
+        loader: 'file?name=static/[name].css!sass?outputStyle=compressed'
       }
     ]
   },
